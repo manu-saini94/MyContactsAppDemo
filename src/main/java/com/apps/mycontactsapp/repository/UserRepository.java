@@ -23,6 +23,15 @@ public interface UserRepository {
     User save(User user);
 
     /**
+     * Finds a user by their email address.
+     *
+     * @param email the email address to search for.
+     * @return an {@link java.util.Optional} containing the user if found, or empty
+     *         otherwise.
+     */
+    java.util.Optional<com.apps.mycontactsapp.model.User> findByEmail(String email);
+
+    /**
      * Checks if a user exists with the given email address.
      * <p>
      * This method is useful for validation to prevent duplicate registrations.
