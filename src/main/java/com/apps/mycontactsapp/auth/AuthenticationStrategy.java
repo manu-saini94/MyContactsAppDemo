@@ -5,16 +5,14 @@ import com.apps.mycontactsapp.model.User;
 
 /**
  * Strategy interface for user authentication.
- * <p>
+ *
  * This interface defines the contract for different authentication mechanisms
  * (e.g., Basic Auth, OAuth).
- * <p>
- * <b>Design Patterns:</b>
- * <ul>
- * <li><b>Strategy Pattern:</b> This interface acts as the Strategy in the
- * Strategy Pattern,
- * allowing the authentication algorithm to be selected at runtime.</li>
- * </ul>
+ *
+ * Design Patterns:
+ * - Strategy Pattern: This interface acts as the Strategy in the Strategy
+ * Pattern,
+ * allowing the authentication algorithm to be selected at runtime.
  */
 public interface AuthenticationStrategy {
 

@@ -1,6 +1,7 @@
 package com.apps.mycontactsapp;
 
 import java.util.Optional;
+import java.util.Scanner;
 
 import com.apps.mycontactsapp.auth.AuthenticationStrategy;
 import com.apps.mycontactsapp.auth.BasicAuthenticationStrategy;
@@ -14,82 +15,100 @@ import com.apps.mycontactsapp.service.impl.UserServiceImpl;
 
 /**
  * Main class for verifying implementation of Use Case 2 (User Authentication).
- * <p>
- * This class simulates the login flow, including user registration (setup),
- * credential verification via {@link BasicAuthenticationStrategy}, and session
- * management
- * via {@link SessionManager}.
+ *
+ * This class provides a menu-driven interface to test the user registration
+ * and authentication functionality interactively, using a Scanner directly
+ * within the class.
  */
 public class MyContactsAppMainUC2 {
 
-    public static void main(String[] args) {
-        System.out.println("--- Starting UC2 User Authentication Verification ---");
+    private static Scanner scanner = new Scanner(System.in);
 
-        // 1. Setup - Users need to exist first
+    public static void main(String[] args) {
+        // Initialize dependencies
         UserRepository userRepository = new UserRepositoryStub();
         UserService userService = new UserServiceImpl(userRepository);
-
-        try {
-            System.out.println("\n[Setup] Registering user 'Alice'...");
-            userService.registerUser("Alice", "alice@example.com", "StrongPass123", "FREE");
-            System.out.println("[Setup] User 'Alice' registered successfully.");
-        } catch (ValidationException e) {
-            System.err.println("[Setup] Failed: " + e.getMessage());
-            return;
-        }
-
-        // 2. Initialize Auth Strategy and Session Manager
         AuthenticationStrategy authStrategy = new BasicAuthenticationStrategy(userRepository);
         SessionManager sessionManager = SessionManager.getInstance();
 
-        // 3. Test Successful Login
-        System.out.println("\nTest 1: Login with valid credentials...");
-        Optional<User> authenticatedUser = authStrategy.authenticate("alice@example.com", "StrongPass123");
+        System.out.println("--- UC2: User Authentication Menu ---");
 
-        if (authenticatedUser.isPresent()) {
-            System.out.println("SUCCESS: Authentication successful for " + authenticatedUser.get().getName());
-            String token = sessionManager.createSession(authenticatedUser.get());
-            System.out.println("SUCCESS: Session created. Token: " + token);
+        boolean running = true;
+        while (running) {
+            System.out.println("\nSelect an option:");
+            System.out.println("1. Register User");
+            System.out.println("2. Login");
+            System.out.println("3. Exit");
 
-            // Verify session retrieval
-            User sessionUser = sessionManager.getUserFromSession(token);
-            if (sessionUser != null && sessionUser.getEmail().equals("alice@example.com")) {
-                System.out.println("SUCCESS: User retrieved from valid session.");
-            } else {
-                System.err.println("FAILED: Could not retrieve user from session.");
+            int choice = readInt("Enter choice:");
+
+            switch (choice) {
+                case 1:
+                    registerUserUI(userService);
+                    break;
+                case 2:
+                    loginUserUI(authStrategy, sessionManager);
+                    break;
+                case 3:
+                    running = false;
+                    System.out.println("Exiting...");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
             }
+        }
+        scanner.close();
+    }
 
+    public static void registerUserUI(UserService userService) {
+        System.out.println("\n--- Register User ---");
+        String name = readString("Name:");
+        String email = readString("Email:");
+        String password = readString("Password:");
+        String userType = readString("User Type (FREE/PREMIUM):");
+
+        try {
+            userService.registerUser(name, email, password, userType);
+            System.out.println("SUCCESS: User registered successfully.");
+        } catch (ValidationException e) {
+            System.out.println("ERROR: " + e.getMessage());
+        }
+    }
+
+    public static void loginUserUI(AuthenticationStrategy authStrategy, SessionManager sessionManager) {
+        System.out.println("\n--- Login ---");
+        String email = readString("Email:");
+        String password = readString("Password:");
+
+        Optional<User> userOpt = authStrategy.authenticate(email, password);
+
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            String token = sessionManager.createSession(user);
+            System.out.println("SUCCESS: Login successful.");
+            System.out.println("Welcome, " + user.getName() + "!");
+            System.out.println("Session Token: " + token);
         } else {
-            System.err.println("FAILED: Authentication failed for valid credentials.");
+            System.out.println("FAILED: Invalid email or password.");
         }
+    }
 
-        // 4. Test Invalid Password
-        System.out.println("\nTest 2: Login with incorrect password...");
-        Optional<User> failedAuth = authStrategy.authenticate("alice@example.com", "WrongPass123");
-        if (!failedAuth.isPresent()) {
-            System.out.println("SUCCESS: Authentication failed as expected.");
-        } else {
-            System.err.println("FAILED: Authentication succeeded with wrong password!");
+    // --- Input Helper Methods ---
+
+    public static String readString(String prompt) {
+        System.out.print(prompt + " ");
+        return scanner.nextLine().trim();
+    }
+
+    public static int readInt(String prompt) {
+        while (true) {
+            System.out.print(prompt + " ");
+            try {
+                String input = scanner.nextLine().trim();
+                return Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number.");
+            }
         }
-
-        // 5. Test Non-existent User
-        System.out.println("\nTest 3: Login with non-existent user...");
-        Optional<User> noUserAuth = authStrategy.authenticate("nobody@example.com", "AnyPass");
-        if (!noUserAuth.isPresent()) {
-            System.out.println("SUCCESS: Authentication failed as expected.");
-        } else {
-            System.err.println("FAILED: Authentication succeeded for non-existent user!");
-        }
-
-        // 6. Test OAuth (Template)
-        System.out.println("\nTest 4: OAuth Login (Template)...");
-        // We just verify it compiles and returns empty/throws as implemented
-        com.apps.mycontactsapp.auth.OAuthAuthenticationStrategy oauth = new com.apps.mycontactsapp.auth.OAuthAuthenticationStrategy();
-        Optional<User> oauthResult = oauth.authenticate("Google", "token123");
-        if (!oauthResult.isPresent()) {
-            System.out.println("SUCCESS: OAuth template returned empty Optional as expected.");
-        }
-
-        System.out.println("\n--- Verification Complete ---");
     }
 }

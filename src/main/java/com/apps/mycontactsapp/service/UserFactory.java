@@ -8,16 +8,14 @@ import com.apps.mycontactsapp.model.UserType;
 
 /**
  * Factory class for creating {@link User} instances.
- * <p>
- * <b>Design Patterns:</b>
- * <ul>
- * <li><b>Factory Pattern:</b> This class implements the Factory Pattern to
+ *
+ * Design Patterns:
+ * - Factory Pattern: This class implements the Factory Pattern to
  * encapsulate the logic
  * of creating different types of {@link User} objects (e.g., Free, Premium)
  * based on input criteria.
  * It decouples the client code from the specific classes being
- * instantiated.</li>
- * </ul>
+ * instantiated.
  */
 public class UserFactory {
 
@@ -38,9 +36,9 @@ public class UserFactory {
      * @param email          the user's email address.
      * @param hashedPassword the user's password (already hashed or to be hashed by
      *                       builder).
-     *                       <i>Note: The Builder currently hashes the password, so
+     *                       Note: The Builder currently hashes the password, so
      *                       this should be the plain password if calling Builder
-     *                       key methods.</i>
+     *                       key methods.
      * @return a concrete implementation of {@link User} (e.g., {@link FreeUser} or
      *         {@link PremiumUser}).
      * @throws ValidationException if the user type is unsupported or validation

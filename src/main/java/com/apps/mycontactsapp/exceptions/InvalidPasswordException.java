@@ -2,7 +2,7 @@ package com.apps.mycontactsapp.exceptions;
 
 /**
  * Exception thrown when a password does not meet complexity requirements.
- * <p>
+ *
  * This is a specific subtype of {@link ValidationException}.
  */
 public class InvalidPasswordException extends ValidationException {

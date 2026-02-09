@@ -9,7 +9,7 @@ import com.apps.mycontactsapp.service.UserService;
 
 /**
  * Implementation of the {@link UserService} interface.
- * <p>
+ *
  * This service handles the core business logic for user registration, including
  * input validation,
  * user type handling, and persistence coordination.
@@ -20,7 +20,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Constructs a new UserServiceImpl with the required repository dependency.
-     * <p>
+     *
      * This constructor supports Dependency Injection (DI) as per the Inversion of
      * Control (IoC) principle.
      *
@@ -32,18 +32,17 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Registers a new user based on the provided details.
-     * <p>
-     * <b>Design Patterns:</b>
-     * <ul>
-     * <li><b>Factory Pattern:</b> Uses {@link UserFactory} for creating concrete
+     *
+     * Design Patterns:
+     * - Factory Pattern: Uses {@link UserFactory} for creating concrete
      * {@link User} instances
      * (e.g., FreeUser, PremiumUser) based on the {@code userType} string.
-     * This encapsulates the object creation logic and promotes loose coupling.</li>
-     * <li><b>Builder Pattern:</b> The {@link UserFactory} internally uses the
+     * This encapsulates the object creation logic and promotes loose coupling.
+     * - Builder Pattern: The {@link UserFactory} internally uses the
      * Builder Pattern (via {@code User.UserBuilder})
      * to construct complex user objects step-by-step, ensuring mandatory fields are
-     * set and validation rules are applied.</li>
-     * </ul>
+     * set and validation rules are applied.
+     *
      *
      * @param name        the name of the user.
      * @param email       the email address (must be unique).

@@ -4,7 +4,7 @@ import com.apps.mycontactsapp.exceptions.ValidationException;
 
 /**
  * Service interface for User Management operations.
- * <p>
+ *
  * Specifically handles User Registration (UC-01) logic, abstracting the
  * business rules
  * from the controller or client layers.
@@ -13,7 +13,7 @@ public interface UserService {
 
     /**
      * Registers a new user in the system.
-     * <p>
+     *
      * This method orchestrates the user creation process, including validation,
      * user type determination, and persistence.
      *

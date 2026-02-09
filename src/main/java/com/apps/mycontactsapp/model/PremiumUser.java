@@ -4,15 +4,13 @@ import com.apps.mycontactsapp.exceptions.ValidationException;
 
 /**
  * Concrete implementation of a {@link User} with "PREMIUM" privileges.
- * <p>
+ *
  * This class extends the base User and provides its own Builder implementation.
- * <p>
- * <b>Design Patterns:</b>
- * <ul>
- * <li><b>Builder Pattern:</b> Implements the same pattern as {@link FreeUser},
+ *
+ * Design Patterns:
+ * - Builder Pattern: Implements the same pattern as {@link FreeUser},
  * allowing
- * for consistent object construction for premium users.</li>
- * </ul>
+ * for consistent object construction for premium users.
  */
 public class PremiumUser extends User {
 
@@ -37,7 +35,7 @@ public class PremiumUser extends User {
 
         /**
          * Builds a new {@link PremiumUser} instance.
-         * <p>
+         *
          * Sets the user type to {@link UserType#PREMIUM} and validates mandatory
          * fields.
          *

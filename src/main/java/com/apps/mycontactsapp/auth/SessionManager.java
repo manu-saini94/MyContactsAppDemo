@@ -7,17 +7,15 @@ import com.apps.mycontactsapp.model.User;
 
 /**
  * Singleton class for managing active user sessions.
- * <p>
+ *
  * This manager handles the creation, retrieval, and invalidation of session
  * tokens.
- * <p>
- * <b>Design Patterns:</b>
- * <ul>
- * <li><b>Singleton Pattern:</b> Ensures that only one instance of the
+ *
+ * Design Patterns:
+ * - Singleton Pattern: Ensures that only one instance of the
  * SessionManager exists
  * throughout the application lifecycle, providing a global point of access for
- * session state.</li>
- * </ul>
+ * session state.
  */
 public class SessionManager {
 
@@ -33,7 +31,7 @@ public class SessionManager {
 
     /**
      * Returns the single instance of the SessionManager.
-     * <p>
+     *
      * Creates the instance if it doesn't exist (Lazy Initialization).
      *
      * @return the singleton {@link SessionManager} instance.
