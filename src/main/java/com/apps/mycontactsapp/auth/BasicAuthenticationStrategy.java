@@ -9,15 +9,13 @@ import com.apps.mycontactsapp.util.PasswordHasher;
 /**
  * Concrete implementation of {@link AuthenticationStrategy} for Basic
  * Authentication.
- * <p>
+ *
  * This class authenticates users using their email (identifier) and password
  * (secret).
- * <p>
- * <b>Design Patterns:</b>
- * <ul>
- * <li><b>Strategy Pattern:</b> Implements one of the strategies for
- * authentication (Basic Auth).</li>
- * </ul>
+ *
+ * Design Patterns:
+ * - Strategy Pattern: Implements one of the strategies for
+ * authentication (Basic Auth).
  */
 public class BasicAuthenticationStrategy implements AuthenticationStrategy {
 
@@ -35,14 +33,14 @@ public class BasicAuthenticationStrategy implements AuthenticationStrategy {
 
     /**
      * Authenticates a user by verifying their email and password.
-     * <p>
+     *
      * The method:
      * 1. Hashes the provided plain text password.
      * 2. Retrieves the stored user (if any) using a helper method (simulated
      * findByEmail).
      * 3. Compares the stored password hash with the computed hash.
-     * <p>
-     * <i>Note: Since UserRepository currently only has `existsByEmail` and `save`,
+     *
+     * Note: Since UserRepository currently only has `existsByEmail` and `save`,
      * we are assuming for this implementation that `save` returns the user or we'd
      * need a `findByEmail`.
      * Given the limitations of the current Repository interface, I'll iterate
@@ -56,7 +54,7 @@ public class BasicAuthenticationStrategy implements AuthenticationStrategy {
      * minor addition for UC2 necessity.
      * Or, I will check if I can use existing methods. `save` returns User. `exists`
      * returns boolean.
-     * I MUST add `findByEmail` to `UserRepository` to make this work.</i>
+     * I MUST add `findByEmail` to `UserRepository` to make this work.
      *
      * @param email    the user's email address.
      * @param password the user's plain text password.

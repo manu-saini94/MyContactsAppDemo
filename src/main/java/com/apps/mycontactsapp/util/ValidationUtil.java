@@ -6,7 +6,7 @@ import com.apps.mycontactsapp.exceptions.InvalidPasswordException;
 
 /**
  * Utility class for input validation.
- * <p>
+ *
  * Contains static methods to validate common data formats like emails and
  * passwords.
  */
@@ -31,14 +31,13 @@ public class ValidationUtil {
 
     /**
      * Validates that a password meets the security complexity requirements.
-     * <p>
+     *
      * Requirements:
-     * <ul>
-     * <li>At least one uppercase letter</li>
-     * <li>At least one lowercase letter</li>
-     * <li>At least one digit</li>
-     * <li>Minimum length of 8 characters</li>
-     * </ul>
+     * - At least one uppercase letter
+     * - At least one lowercase letter
+     * - At least one digit
+     * - Minimum length of 8 characters
+     *
      *
      * @param password the password string to validate.
      * @throws InvalidPasswordException if the password is null or does not meet

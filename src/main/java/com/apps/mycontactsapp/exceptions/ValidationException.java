@@ -2,7 +2,7 @@ package com.apps.mycontactsapp.exceptions;
 
 /**
  * Base exception for all validation-related errors.
- * <p>
+ *
  * This checked exception is thrown when input data fails to meet the required
  * format or constraints.
  */

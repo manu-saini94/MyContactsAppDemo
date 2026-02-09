@@ -1,5 +1,7 @@
 package com.apps.mycontactsapp;
 
+import java.util.Scanner;
+
 import com.apps.mycontactsapp.exceptions.ValidationException;
 import com.apps.mycontactsapp.repository.UserRepository;
 import com.apps.mycontactsapp.repository.stub.UserRepositoryStub;
@@ -8,58 +10,75 @@ import com.apps.mycontactsapp.service.impl.UserServiceImpl;
 
 /**
  * Main class for verifying implementation of Use Case 1 (User Registration).
- * <p>
- * This class simulates the application entry point and runs a series of tests
- * against the
- * {@link com.apps.mycontactsapp.service.UserService} implementation using a
- * stubbed repository.
+ *
+ * This class provides a menu-driven interface to test the user registration
+ * functionality interactively, using a Scanner directly within the class.
  */
 public class MyContactsAppMainUC1 {
 
+    private static Scanner scanner = new Scanner(System.in);
+
     public static void main(String[] args) {
-        // 1. Setup
+        // Initialize dependencies
         UserRepository userRepository = new UserRepositoryStub();
         UserService userService = new UserServiceImpl(userRepository);
 
-        System.out.println("--- Starting UC1 User Registration Verification ---");
+        System.out.println("--- UC1: User Registration Menu ---");
 
-        // 2. Test Success Case
-        try {
-            System.out.println("\nTest 1: Registering new user 'Alice'...");
-            userService.registerUser("Alice", "alice@example.com", "StrongPass123", "FREE");
-            System.out.println("SUCCESS: User 'Alice' registered.");
-        } catch (ValidationException e) {
-            System.err.println("FAILED: " + e.getMessage());
+        boolean running = true;
+        while (running) {
+            System.out.println("\nSelect an option:");
+            System.out.println("1. Register User");
+            System.out.println("2. Exit");
+
+            int choice = readInt("Enter choice:");
+
+            switch (choice) {
+                case 1:
+                    registerUserUI(userService);
+                    break;
+                case 2:
+                    running = false;
+                    System.out.println("Exiting...");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
         }
-
-        // 3. Test Duplicate Email
-        try {
-            System.out.println("\nTest 2: Registering duplicate user 'alice@example.com'...");
-            userService.registerUser("Alice Duplicate", "alice@example.com", "password456", "PREMIUM");
-            System.err.println("FAILED: Should have thrown ValidationException for duplicate email.");
-        } catch (ValidationException e) {
-            System.out.println("SUCCESS: Caught expected exception: " + e.getMessage());
-        }
-
-        // 4. Test Invalid User Type
-        try {
-            System.out.println("\nTest 3: Registering with invalid user type 'INVALID_TYPE'...");
-            userService.registerUser("Bob", "bob@example.com", "password789", "INVALID_TYPE");
-            System.err.println("FAILED: Should have thrown ValidationException for invalid user type.");
-        } catch (ValidationException e) {
-            System.out.println("SUCCESS: Caught expected exception: " + e.getMessage());
-        }
-
-        // 5. Test Invalid Password (empty)
-        try {
-            System.out.println("\nTest 4: Registering with empty password...");
-            userService.registerUser("Charlie", "charlie@example.com", "", "FREE");
-            System.err.println("FAILED: Should have thrown ValidationException for empty password.");
-        } catch (ValidationException e) {
-            System.out.println("SUCCESS: Caught expected exception: " + e.getMessage());
-        }
-
-        System.out.println("\n--- Verification Complete ---");
+        scanner.close();
     }
 
+    public static void registerUserUI(UserService userService) {
+        System.out.println("\n--- Register User ---");
+        String name = readString("Name:");
+        String email = readString("Email:");
+        String password = readString("Password:");
+        String userType = readString("User Type (FREE/PREMIUM):");
+
+        try {
+            userService.registerUser(name, email, password, userType);
+            System.out.println("SUCCESS: User registered successfully.");
+        } catch (ValidationException e) {
+            System.out.println("ERROR: " + e.getMessage());
+        }
+    }
+
+    // --- Input Helper Methods ---
+
+    public static String readString(String prompt) {
+        System.out.print(prompt + " ");
+        return scanner.nextLine().trim();
+    }
+
+    public static int readInt(String prompt) {
+        while (true) {
+            System.out.print(prompt + " ");
+            try {
+                String input = scanner.nextLine().trim();
+                return Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number.");
+            }
+        }
+    }
 }

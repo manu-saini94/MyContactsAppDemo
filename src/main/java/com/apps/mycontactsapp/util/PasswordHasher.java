@@ -6,7 +6,7 @@ import java.util.Base64;
 
 /**
  * Utility class for hashing passwords.
- * <p>
+ *
  * This class provides methods to securely hash passwords using SHA-256
  * algorithm.
  */

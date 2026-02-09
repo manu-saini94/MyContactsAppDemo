@@ -8,23 +8,22 @@ import com.apps.mycontactsapp.util.ValidationUtil;
 
 /**
  * Abstract base class representing a User in the system.
- * <p>
- * <b>Design Patterns:</b>
- * <ul>
- * <li><b>Builder Pattern:</b> This class uses a generic, self-typed Builder
+ *
+ * Design Patterns:
+ * - Builder Pattern: This class uses a generic, self-typed Builder
  * Pattern ({@link UserBuilder})
  * to construct instances. This handles optional parameters and complex
  * validation logic
- * during object creation, enforcing immutability.</li>
- * </ul>
+ * during object creation, enforcing immutability.
  */
 public abstract class User {
     private final Long id;
-    private final String name;
+    private String name;
     private final String email;
-    private final String passwordHash;
+    private String passwordHash;
     private final LocalDateTime createdAt;
     private final UserType userType;
+    private ProfilePreferences preferences;
 
     /**
      * Protected constructor to be called by the Builder.
@@ -38,6 +37,7 @@ public abstract class User {
         this.passwordHash = builder.passwordHash;
         this.createdAt = builder.createdAt;
         this.userType = builder.userType;
+        this.preferences = new ProfilePreferences(); // Initialize with defaults
     }
 
     // Getters
@@ -49,12 +49,20 @@ public abstract class User {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getEmail() {
         return email;
     }
 
     public String getPasswordHash() {
         return passwordHash;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -65,9 +73,17 @@ public abstract class User {
         return userType;
     }
 
+    public ProfilePreferences getPreferences() {
+        return preferences;
+    }
+
+    public void setPreferences(ProfilePreferences preferences) {
+        this.preferences = preferences;
+    }
+
     /**
      * Generic self-typed Builder for constructing {@link User} instances.
-     * <p>
+     *
      * This builder supports inheritance, allowing subclasses of {@link User} (like
      * {@link FreeUser} and {@link PremiumUser})
      * to share common building logic while maintaining a fluent interface.
@@ -160,7 +176,7 @@ public abstract class User {
 
         /**
          * Returns the builder instance itself.
-         * <p>
+         *
          * This method is the key to the "self-typed" pattern, allowing fluent chaining
          * across inheritance hierarchies.
          *
