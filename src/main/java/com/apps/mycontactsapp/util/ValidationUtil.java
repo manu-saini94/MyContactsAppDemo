@@ -2,7 +2,7 @@ package com.apps.mycontactsapp.util;
 
 import java.util.regex.Pattern;
 import com.apps.mycontactsapp.exceptions.InvalidEmailException;
-import com.apps.mycontactsapp.exceptions.InvalidPasswordException;
+import com.apps.mycontactsapp.exceptions.ValidationException;
 
 /**
  * Utility class for input validation.
@@ -13,8 +13,6 @@ import com.apps.mycontactsapp.exceptions.InvalidPasswordException;
 public class ValidationUtil {
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
-
-    private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d).{8,}$");
 
     /**
      * Validates that an email string matches the standard email format.
@@ -40,13 +38,29 @@ public class ValidationUtil {
      *
      *
      * @param password the password string to validate.
-     * @throws InvalidPasswordException if the password is null or does not meet
-     *                                  complexity rules.
+     * @throws ValidationException if the password is null or does not meet
+     *                             complexity rules.
      */
-    public static void validatePassword(String password) throws InvalidPasswordException {
-        if (password == null || !PASSWORD_PATTERN.matcher(password).matches()) {
-            throw new InvalidPasswordException(
-                    "Password must contain upper, lower case letters and a digit (min 8 chars)");
+    public static void validatePassword(String password) throws ValidationException {
+        if (password == null || password.length() < 8) {
+            throw new ValidationException("Password must be at least 8 characters long.");
         }
+        if (!password.matches(".*[A-Z].*")) {
+            throw new ValidationException("Password must contain at least one uppercase letter.");
+        }
+        if (!password.matches(".*[0-9].*")) {
+            throw new ValidationException("Password must contain at least one digit.");
+        }
+    }
+
+    public static void validatePhoneNumber(String phoneNumber) throws ValidationException {
+        if (phoneNumber == null || !phoneNumber.matches("\\d{10}")) {
+            throw new ValidationException("Invalid phone number format. Must be 10 digits.");
+        }
+    }
+
+    // Reuse existing validateEmail but with specific context if needed
+    public static void validateContactEmail(String email) throws ValidationException {
+        validateEmail(email);
     }
 }

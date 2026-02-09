@@ -32,7 +32,7 @@ public class UserRepositoryStub implements UserRepository {
     }
 
     @Override
-    public java.util.Optional<com.apps.mycontactsapp.model.User> findByEmail(String email) {
+    public java.util.Optional<User> findByEmail(String email) {
         return java.util.Optional.ofNullable(users.get(email));
     }
 
