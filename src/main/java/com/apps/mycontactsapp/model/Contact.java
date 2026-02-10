@@ -19,6 +19,7 @@ public abstract class Contact implements ContactDisplay {
     private final Long userId; // Owner of the contact
     private String name;
     private final LocalDateTime createdAt;
+    private boolean active = true; // Soft delete flag
     private List<PhoneNumber> phoneNumbers;
     private List<EmailAddress> emailAddresses;
 
@@ -27,6 +28,7 @@ public abstract class Contact implements ContactDisplay {
         this.userId = builder.userId;
         this.name = builder.name;
         this.createdAt = LocalDateTime.now();
+        this.active = true;
         this.phoneNumbers = new ArrayList<>(builder.phoneNumbers);
         this.emailAddresses = new ArrayList<>(builder.emailAddresses);
     }
@@ -37,6 +39,7 @@ public abstract class Contact implements ContactDisplay {
         this.userId = source.userId; // Preserve ownership
         this.name = source.name;
         this.createdAt = source.createdAt;
+        this.active = source.active; // Preserve active state
         this.phoneNumbers = new ArrayList<>(source.phoneNumbers);
         this.emailAddresses = new ArrayList<>(source.emailAddresses);
     }
@@ -53,6 +56,7 @@ public abstract class Contact implements ContactDisplay {
 
     protected void updateStateFrom(Contact source) {
         this.name = source.name;
+        this.active = source.active;
         this.phoneNumbers = new ArrayList<>(source.phoneNumbers);
         this.emailAddresses = new ArrayList<>(source.emailAddresses);
         // userId and id are final and should not change during restore
@@ -79,6 +83,14 @@ public abstract class Contact implements ContactDisplay {
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public List<PhoneNumber> getPhoneNumbers() {

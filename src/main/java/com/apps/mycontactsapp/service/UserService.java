@@ -25,4 +25,36 @@ public interface UserService {
      *                             weak password, invalid user type).
      */
     void registerUser(String name, String email, String password, String userType) throws ValidationException;
+
+    /**
+     * Retrieves all users in the system.
+     * This operation is restricted to Administrators only.
+     *
+     * @param requester the user requesting the list (must be ADMIN).
+     * @return a list of all registered users.
+     * @throws ValidationException if the requester is not an Admin.
+     */
+    java.util.List<com.apps.mycontactsapp.model.User> getAllUsers(com.apps.mycontactsapp.model.User requester)
+            throws ValidationException;
+
+    /**
+     * Deletes a user by their email address.
+     * This operation is restricted to Administrators only.
+     * Triggers a cascade delete of all contacts owned by the target user.
+     *
+     * @param requester   the user requesting the deletion (must be ADMIN).
+     * @param targetEmail the email of the user to delete.
+     * @throws ValidationException if the requester is not an Admin or user not
+     *                             found.
+     */
+    void deleteUser(com.apps.mycontactsapp.model.User requester, String targetEmail) throws ValidationException;
+
+    /**
+     * Deletes the specified user account.
+     * This is the underlying method that performs the deletion and cascading.
+     * Users can call this to delete their own account.
+     *
+     * @param user the user to delete.
+     */
+    void deleteUser(com.apps.mycontactsapp.model.User user);
 }

@@ -70,4 +70,16 @@ public class UserRepositoryStub implements UserRepository {
         return users.containsKey(email);
     }
 
+    @Override
+    public java.util.List<User> findAll() {
+        return new java.util.ArrayList<>(users.values());
+    }
+
+    @Override
+    public void delete(User user) {
+        if (user != null) {
+            users.remove(user.getEmail());
+        }
+    }
+
 }

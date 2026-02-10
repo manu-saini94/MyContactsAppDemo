@@ -23,7 +23,15 @@ public class ContactServiceImpl implements ContactService {
     }
 
     /**
-     * {@inheritDoc}
+     * Creates a new Person contact.
+     * Validates that the owner exists.
+     *
+     * @param owner     the user creating the contact.
+     * @param firstName the first name.
+     * @param lastName  the last name.
+     * @param phones    list of phone numbers.
+     * @param emails    list of email addresses.
+     * @throws ValidationException if the owner is null or inputs are invalid.
      */
     @Override
     public void createPerson(User owner, String firstName, String lastName, List<String> phones, List<String> emails)
@@ -45,7 +53,16 @@ public class ContactServiceImpl implements ContactService {
     }
 
     /**
-     * {@inheritDoc}
+     * Creates a new Organization contact.
+     * Validates that the owner exists.
+     *
+     * @param owner      the user creating the contact.
+     * @param name       the organization name.
+     * @param website    the website URL.
+     * @param department the department.
+     * @param phones     list of phone numbers.
+     * @param emails     list of email addresses.
+     * @throws ValidationException if the owner is null or inputs are invalid.
      */
     @Override
     public void createOrganization(User owner, String name, String website, String department, List<String> phones,
@@ -73,17 +90,144 @@ public class ContactServiceImpl implements ContactService {
     /**
      * {@inheritDoc}
      */
+    /**
+     * Retrieves contacts for the requesting user.
+     * Defaults to including inactive contacts so users can see soft-deleted items
+     * in their list (usually to restore or permanent delete).
+     *
+     * @param requester the user requesting the list.
+     * @return a list of contacts visible to the user.
+     */
     @Override
     public List<Contact> getContacts(User requester) {
+        // Default behavior: include inactive so users can see soft-deleted contacts
+        return getContacts(requester, true);
+    }
+
+    /**
+     * Retrieves contacts with an option to include inactive ones.
+     * Admin can see all contacts. Regular users can only see their own.
+     *
+     * @param requester       the user requesting the contacts.
+     * @param includeInactive whether to include soft-deleted contacts.
+     * @return a list of contacts.
+     */
+    @Override
+    public List<Contact> getContacts(User requester, boolean includeInactive) {
         if (requester == null) {
             return List.of();
         }
 
+        // ACL: Only Admin can request inactive contacts generally?
+        // Actually, user might want to see their own trash bin.
+        // But for now, let's allow it but filter by ownership unless Admin.
+
         if (UserType.ADMIN.equals(requester.getUserType())) {
-            return contactRepository.findAll();
+            return contactRepository.findAll(includeInactive);
         } else {
-            return contactRepository.findByUserId(requester.getId());
+            // Regular user can only see their own.
+            // If they request inactive, they see their own inactive too.
+            return contactRepository.findByUserId(requester.getId(), includeInactive);
         }
+    }
+
+    private final java.util.List<com.apps.mycontactsapp.observer.ContactObserver> observers = new java.util.ArrayList<>();
+
+    /**
+     * Adds an observer for contact events.
+     *
+     * @param observer the observer to register.
+     */
+    @Override
+    public void addObserver(com.apps.mycontactsapp.observer.ContactObserver observer) {
+        observers.add(observer);
+    }
+
+    private void notifyObservers(Contact contact) {
+        for (com.apps.mycontactsapp.observer.ContactObserver observer : observers) {
+            observer.onContactDeleted(contact);
+        }
+    }
+
+    /**
+     * Soft deletes a contact.
+     * Mocks logic: verify existence, check active status, check permission (Owner
+     * or Admin).
+     *
+     * @param requester the user requesting deletion.
+     * @param contactId the UUID of the contact.
+     * @throws ValidationException if not found, already deleted, or access denied.
+     */
+    @Override
+    public void deleteContact(User requester, java.util.UUID contactId) throws ValidationException {
+        java.util.Optional<Contact> contactOpt = contactRepository.findById(contactId);
+        if (contactOpt.isEmpty()) {
+            throw new ValidationException("Contact not found.");
+        }
+
+        Contact contact = contactOpt.get();
+        if (!contact.isActive()) {
+            throw new ValidationException("Contact not found."); // Treat soft-deleted as not found
+        }
+
+        // ACL Check: Admin can delete anyone's contact. Owner can delete own contact.
+        boolean isAdmin = requester.getUserType() == UserType.ADMIN;
+        boolean isOwner = contact.getUserId() != null && contact.getUserId().equals(requester.getId());
+
+        if (!isAdmin && !isOwner) {
+            throw new ValidationException("Access Denied: You cannot delete this contact.");
+        }
+
+        contactRepository.delete(contact);
+        notifyObservers(contact);
+    }
+
+    /**
+     * Hard deletes a contact (Permanent).
+     * Removes the contact completely from the repository.
+     *
+     * @param requester the user requesting deletion.
+     * @param contactId the UUID of the contact.
+     * @throws ValidationException if not found or access denied.
+     */
+    @Override
+    public void hardDeleteContact(User requester, java.util.UUID contactId) throws ValidationException {
+        java.util.Optional<Contact> contactOpt = contactRepository.findById(contactId);
+        // We find even inactive contacts for hard delete if we want to allow cleaning
+        // up trash
+        // But if findAll filters them out, findById might not...
+        // Logic: specific retrieval usually finds it.
+
+        if (contactOpt.isEmpty()) {
+            throw new ValidationException("Contact not found.");
+        }
+
+        Contact contact = contactOpt.get();
+
+        // ACL Check for Hard Delete
+        // Admin: YES
+        // Owner: YES (allowing users to permanently delete their own contacts)
+        boolean isAdmin = requester.getUserType() == UserType.ADMIN;
+        boolean isOwner = contact.getUserId() != null && contact.getUserId().equals(requester.getId());
+
+        if (!isAdmin && !isOwner) {
+            throw new ValidationException("Access Denied: You cannot permanently delete this contact.");
+        }
+
+        contactRepository.hardDelete(contact);
+        // We could notify observers here as well if we want to log permanent deletion
+        notifyObservers(contact);
+    }
+
+    /**
+     * Deletes all contacts for a specific user.
+     * Used for cascading user deletion.
+     *
+     * @param userId the ID of the user.
+     */
+    @Override
+    public void deleteAllContactsForUser(Long userId) {
+        contactRepository.deleteByUserId(userId);
     }
 
     /**

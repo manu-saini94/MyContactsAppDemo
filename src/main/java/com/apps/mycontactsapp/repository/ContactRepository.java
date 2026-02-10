@@ -16,5 +16,15 @@ public interface ContactRepository {
 
     List<Contact> findAll();
 
+    List<Contact> findAll(boolean includeInactive);
+
     List<Contact> findByUserId(Long userId);
+
+    List<Contact> findByUserId(Long userId, boolean includeInactive);
+
+    void delete(Contact contact);
+
+    void hardDelete(Contact contact);
+
+    void deleteByUserId(Long userId);
 }

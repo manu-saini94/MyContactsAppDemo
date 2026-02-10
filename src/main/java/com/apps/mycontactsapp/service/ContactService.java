@@ -1,6 +1,7 @@
 package com.apps.mycontactsapp.service;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.apps.mycontactsapp.exceptions.ValidationException;
 import com.apps.mycontactsapp.model.Contact;
@@ -48,4 +49,48 @@ public interface ContactService {
          * @return a filtered list of contacts.
          */
         List<Contact> getContacts(User requester);
+
+        /**
+         * Retrieves contacts with an option to include inactive ones.
+         * RESTRICTED: Only ADMIN or the specific user can see their own inactive
+         * contacts.
+         *
+         * @param requester       the user requesting the contacts.
+         * @param includeInactive whether to include soft-deleted contacts.
+         * @return a list of contacts.
+         */
+        List<Contact> getContacts(User requester, boolean includeInactive);
+
+        /**
+         * Deletes a contact (soft delete).
+         *
+         * @param requester the user requesting the deletion.
+         * @param contactId the ID of the contact to delete.
+         * @throws ValidationException if the contact is not found or access is denied.
+         */
+        void deleteContact(User requester, UUID contactId) throws ValidationException;
+
+        /**
+         * Permanently deletes a contact (Hard Delete).
+         *
+         * @param requester the user requesting the deletion.
+         * @param contactId the ID of the contact to delete.
+         * @throws ValidationException if the contact is not found or access is denied.
+         */
+        void hardDeleteContact(User requester, UUID contactId) throws ValidationException;
+
+        /**
+         * Deletes all contacts for a specific user.
+         * Intended for internal use (Cascade Delete) or Admin operations.
+         *
+         * @param userId the ID of the user whose contacts should be deleted.
+         */
+        void deleteAllContactsForUser(Long userId);
+
+        /**
+         * Adds an observer to receive contact event notifications.
+         *
+         * @param observer the observer to add.
+         */
+        void addObserver(com.apps.mycontactsapp.observer.ContactObserver observer);
 }

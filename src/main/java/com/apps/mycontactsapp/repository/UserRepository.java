@@ -41,4 +41,8 @@ public interface UserRepository {
      *         otherwise.
      */
     boolean existsByEmail(String email);
+
+    java.util.List<User> findAll();
+
+    void delete(User user);
 }
