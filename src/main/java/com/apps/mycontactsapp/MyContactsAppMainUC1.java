@@ -18,6 +18,12 @@ public class MyContactsAppMainUC1 {
 
     private static Scanner scanner = new Scanner(System.in);
 
+    /**
+     * Main entry point for the application.
+     * Initializes dependencies and starts the main menu loop.
+     *
+     * @param args Command line arguments (not used).
+     */
     public static void main(String[] args) {
         // Initialize dependencies
         UserRepository userRepository = new UserRepositoryStub();
@@ -48,6 +54,12 @@ public class MyContactsAppMainUC1 {
         scanner.close();
     }
 
+    /**
+     * UI method to handle user registration.
+     * Prompts for user details and delegates to UserService.
+     *
+     * @param userService The service to use for registration.
+     */
     public static void registerUserUI(UserService userService) {
         System.out.println("\n--- Register User ---");
         String name = readString("Name:");
@@ -65,11 +77,24 @@ public class MyContactsAppMainUC1 {
 
     // --- Input Helper Methods ---
 
+    /**
+     * Helper method to read a string from the console.
+     *
+     * @param prompt The prompt to display to the user.
+     * @return The trimmed string input by the user.
+     */
     public static String readString(String prompt) {
         System.out.print(prompt + " ");
         return scanner.nextLine().trim();
     }
 
+    /**
+     * Helper method to read an integer from the console.
+     * Loops until a valid integer is entered.
+     *
+     * @param prompt The prompt to display to the user.
+     * @return The integer input by the user.
+     */
     public static int readInt(String prompt) {
         while (true) {
             System.out.print(prompt + " ");

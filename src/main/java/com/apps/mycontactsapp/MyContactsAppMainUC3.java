@@ -34,6 +34,12 @@ public class MyContactsAppMainUC3 {
     private static AuthenticationStrategy authStrategy = new BasicAuthenticationStrategy(userRepository);
     private static SessionManager sessionManager = SessionManager.getInstance();
 
+    /**
+     * Main entry point for the application.
+     * Initializes dependencies and starts the main menu loop.
+     *
+     * @param args Command line arguments (not used).
+     */
     public static void main(String[] args) {
         System.out.println("--- UC3: User Profile Management ---");
 
@@ -67,6 +73,14 @@ public class MyContactsAppMainUC3 {
         scanner.close();
     }
 
+    /**
+     * Handles user login flow.
+     * Prompts for email and password, attempts authentication, and returns the user
+     * if successful.
+     *
+     * @return An Optional containing the User if login is successful, or empty
+     *         otherwise.
+     */
     private static Optional<User> loginUser() {
         System.out.println("\n--- Login ---");
         String email = readString("Email:");
@@ -85,6 +99,13 @@ public class MyContactsAppMainUC3 {
         }
     }
 
+    /**
+     * Displays the profile management menu and handles user choices.
+     * Allows viewing profile, updating name, changing password, and updating
+     * preferences.
+     *
+     * @param user The currently logged-in user.
+     */
     private static void profileMenu(User user) {
         boolean loggedIn = true;
         while (loggedIn) {
@@ -122,6 +143,11 @@ public class MyContactsAppMainUC3 {
         }
     }
 
+    /**
+     * Displays the user's profile information.
+     *
+     * @param user The user whose profile is to be viewed.
+     */
     private static void viewProfile(User user) {
         System.out.println("\n--- User Profile ---");
         System.out.println("Name: " + user.getName());
@@ -130,6 +156,12 @@ public class MyContactsAppMainUC3 {
         System.out.println("Preferences: " + user.getPreferences());
     }
 
+    /**
+     * UI method to update user profile preferences.
+     * Prompts for various preference settings and updates the user's profile.
+     *
+     * @param user The user whose preferences are to be updated.
+     */
     private static void updatePreferencesUI(User user) {
         System.out.println("\n--- Update Preferences ---");
 
@@ -160,17 +192,36 @@ public class MyContactsAppMainUC3 {
         executeCommand(new UpdatePreferencesCommand(user, newPrefs));
     }
 
+    /**
+     * Executes a ProfileCommand.
+     * This method acts as a simple invoker for commands.
+     *
+     * @param command The command to execute.
+     */
     private static void executeCommand(ProfileCommand command) {
         command.execute();
     }
 
     // --- Public Helper Methods (as requested) ---
 
+    /**
+     * Helper method to read a string from the console.
+     *
+     * @param prompt The prompt to display to the user.
+     * @return The trimmed string input by the user.
+     */
     public static String readString(String prompt) {
         System.out.print(prompt + " ");
         return scanner.nextLine().trim();
     }
 
+    /**
+     * Helper method to read an integer from the console.
+     * Loops until a valid integer is entered.
+     *
+     * @param prompt The prompt to display to the user.
+     * @return The integer input by the user.
+     */
     public static int readInt(String prompt) {
         while (true) {
             System.out.print(prompt + " ");

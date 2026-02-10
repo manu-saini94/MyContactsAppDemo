@@ -27,13 +27,19 @@ public class MyContactsAppMainUC4 {
 
     private static Scanner scanner = new Scanner(System.in);
     private static UserRepository userRepository = new UserRepositoryStub();
-    private static UserService userService = new UserServiceImpl(userRepository);
+    public static UserService userService = new UserServiceImpl(userRepository);
     private static AuthenticationStrategy authStrategy = new BasicAuthenticationStrategy(userRepository);
     private static SessionManager sessionManager = SessionManager.getInstance();
 
     private static ContactRepository contactRepository = new ContactRepositoryStub();
     public static ContactService contactService = new ContactServiceImpl(contactRepository);
 
+    /**
+     * Main entry point for the application.
+     * Initializes dependencies and starts the main menu loop.
+     *
+     * @param args Command line arguments (not used).
+     */
     public static void main(String[] args) {
         System.out.println("--- UC4: Create Contact ---");
 
@@ -67,7 +73,14 @@ public class MyContactsAppMainUC4 {
         scanner.close();
     }
 
-    private static Optional<User> loginUser() {
+    /**
+     * Handles user login flow.
+     * Accessible publicly for reuse in other UCs.
+     *
+     * @return An Optional containing the User if login is successful, or empty
+     *         otherwise.
+     */
+    public static Optional<User> loginUser() {
         System.out.println("\n--- Login ---");
         String email = readString("Email:");
         String password = readString("Password:");
@@ -85,6 +98,12 @@ public class MyContactsAppMainUC4 {
         }
     }
 
+    /**
+     * Displays the contact management menu.
+     * Allows creating different types of contacts and listing them.
+     *
+     * @param user The currently logged-in user (context).
+     */
     private static void contactMenu(User user) {
         boolean loggedIn = true;
         while (loggedIn) {
@@ -116,6 +135,10 @@ public class MyContactsAppMainUC4 {
         }
     }
 
+    /**
+     * UI flow for creating a Person contact.
+     * Prompts for first name, last name, phones, and emails.
+     */
     public static void createPersonContact() {
         System.out.println("\n--- Create Person Contact ---");
         String firstName = readString("First Name:");
@@ -132,6 +155,10 @@ public class MyContactsAppMainUC4 {
         }
     }
 
+    /**
+     * UI flow for creating an Organization contact.
+     * Prompts for organization name, website, department, phones, and emails.
+     */
     public static void createOrganizationContact() {
         System.out.println("\n--- Create Organization Contact ---");
         String name = readString("Organization Name:");
@@ -149,6 +176,9 @@ public class MyContactsAppMainUC4 {
         }
     }
 
+    /**
+     * Lists all existing contacts to the console.
+     */
     public static void listContacts() {
         List<Contact> contacts = contactService.getAllContacts();
         System.out.println("\n--- All Contacts ---");
@@ -164,11 +194,24 @@ public class MyContactsAppMainUC4 {
 
     // --- Helper Methods ---
 
+    /**
+     * Helper method to read a string from the console.
+     *
+     * @param prompt The prompt to display to the user.
+     * @return The trimmed string input by the user.
+     */
     public static String readString(String prompt) {
         System.out.print(prompt + " ");
         return scanner.nextLine().trim();
     }
 
+    /**
+     * Helper method to read an integer from the console.
+     * Loops until a valid integer is entered.
+     *
+     * @param prompt The prompt to display to the user.
+     * @return The integer input by the user.
+     */
     public static int readInt(String prompt) {
         while (true) {
             System.out.print(prompt + " ");
@@ -181,6 +224,12 @@ public class MyContactsAppMainUC4 {
         }
     }
 
+    /**
+     * Helper method to read a comma-separated list of strings from the console.
+     *
+     * @param prompt The prompt to display to the user.
+     * @return A list of strings parsed from the input.
+     */
     public static List<String> readList(String prompt) {
         System.out.println(prompt);
         String input = scanner.nextLine().trim();
