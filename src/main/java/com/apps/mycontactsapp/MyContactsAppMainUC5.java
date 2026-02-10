@@ -1,6 +1,5 @@
 package com.apps.mycontactsapp;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
@@ -8,22 +7,22 @@ import java.util.Scanner;
 import com.apps.mycontactsapp.auth.AuthenticationStrategy;
 import com.apps.mycontactsapp.auth.BasicAuthenticationStrategy;
 import com.apps.mycontactsapp.auth.SessionManager;
-import com.apps.mycontactsapp.exceptions.ValidationException;
+import com.apps.mycontactsapp.decorator.MaskedEmailDecorator;
+import com.apps.mycontactsapp.decorator.UpperCaseDecorator;
 import com.apps.mycontactsapp.model.Contact;
+import com.apps.mycontactsapp.model.ContactDisplay;
 import com.apps.mycontactsapp.model.User;
-import com.apps.mycontactsapp.repository.ContactRepository;
 import com.apps.mycontactsapp.repository.UserRepository;
-import com.apps.mycontactsapp.repository.stub.ContactRepositoryStub;
 import com.apps.mycontactsapp.repository.stub.UserRepositoryStub;
 import com.apps.mycontactsapp.service.ContactService;
 import com.apps.mycontactsapp.service.UserService;
-import com.apps.mycontactsapp.service.impl.ContactServiceImpl;
 import com.apps.mycontactsapp.service.impl.UserServiceImpl;
 
 /**
- * Main class for verifying implementation of Use Case 4 (Create Contact).
+ * Main class for verifying implementation of Use Case 5 (View Contact Details
+ * with Decorators).
  */
-public class MyContactsAppMainUC4 {
+public class MyContactsAppMainUC5 {
 
     private static Scanner scanner = new Scanner(System.in);
     private static UserRepository userRepository = new UserRepositoryStub();
@@ -31,17 +30,14 @@ public class MyContactsAppMainUC4 {
     private static AuthenticationStrategy authStrategy = new BasicAuthenticationStrategy(userRepository);
     private static SessionManager sessionManager = SessionManager.getInstance();
 
-    private static ContactRepository contactRepository = new ContactRepositoryStub();
-    public static ContactService contactService = new ContactServiceImpl(contactRepository);
-
     public static void main(String[] args) {
-        System.out.println("--- UC4: Create Contact ---");
+        System.out.println("--- UC5: View Contact Details & Decorator Pattern ---");
 
         boolean running = true;
         while (running) {
             System.out.println("\nSelect an option:");
             System.out.println("1. Register User");
-            System.out.println("2. Login & Manage Contacts");
+            System.out.println("2. Login & View Contacts");
             System.out.println("3. Exit");
 
             int choice = readInt("Enter choice:");
@@ -53,7 +49,7 @@ public class MyContactsAppMainUC4 {
                 case 2:
                     Optional<User> loggedInUser = loginUser();
                     if (loggedInUser.isPresent()) {
-                        contactMenu(loggedInUser.get());
+                        contactViewMenu(loggedInUser.get());
                     }
                     break;
                 case 3:
@@ -85,29 +81,49 @@ public class MyContactsAppMainUC4 {
         }
     }
 
-    private static void contactMenu(User user) {
-        boolean loggedIn = true;
-        while (loggedIn) {
-            System.out.println("\n--- Contact Management Menu ---");
-            System.out.println("1. Create Person Contact");
-            System.out.println("2. Create Organization Contact");
-            System.out.println("3. List All Contacts");
-            System.out.println("4. Logout");
+    private static void contactViewMenu(User user) {
+
+        boolean viewing = true;
+        while (viewing) {
+            System.out.println("\n--- View Contacts Menu ---");
+            System.out.println("1. Create Person Contact (via UC4)");
+            System.out.println("2. Create Organization Contact (via UC4)");
+            System.out.println("3. List All Contacts (Standard View)");
+            System.out.println("4. View Contact Details (Standard)");
+            System.out.println("5. View Contact Details (UpperCase Decorator)");
+            System.out.println("6. View Contact Details (Masked Email Decorator)");
+            System.out.println("7. View Contact Details (Combined Decorators)");
+            System.out.println("8. Logout");
 
             int choice = readInt("Enter choice:");
 
             switch (choice) {
                 case 1:
-                    createPersonContact();
+                    MyContactsAppMainUC4.createPersonContact();
                     break;
                 case 2:
-                    createOrganizationContact();
+                    MyContactsAppMainUC4.createOrganizationContact();
                     break;
                 case 3:
-                    listContacts();
+                    // Using local because we want indices for selection elsewhere,
+                    // but confusingly 'List All Contacts' could use either.
+                    // Let's use UC4's strictly for this option as 'Report'.
+                    MyContactsAppMainUC4.listContacts();
                     break;
                 case 4:
-                    loggedIn = false;
+                    viewContactDetails(null);
+                    break;
+                case 5:
+                    viewContactDetails("UPPER");
+                    break;
+                case 6:
+                    viewContactDetails("MASKED");
+                    break;
+                case 7:
+                    viewContactDetails("COMBINED");
+                    break;
+                case 8:
+                    viewing = false;
                     System.out.println("Logged out.");
                     break;
                 default:
@@ -116,49 +132,33 @@ public class MyContactsAppMainUC4 {
         }
     }
 
-    public static void createPersonContact() {
-        System.out.println("\n--- Create Person Contact ---");
-        String firstName = readString("First Name:");
-        String lastName = readString("Last Name:");
-
-        List<String> phones = readList("Enter phone numbers (comma separated, format Label:Number or just Number):");
-        List<String> emails = readList("Enter emails (comma separated, format Label:Email or just Email):");
-
-        try {
-            contactService.createPerson(firstName, lastName, phones, emails);
-            System.out.println("SUCCESS: Person contact created.");
-        } catch (ValidationException e) {
-            System.out.println("ERROR: " + e.getMessage());
-        }
-    }
-
-    public static void createOrganizationContact() {
-        System.out.println("\n--- Create Organization Contact ---");
-        String name = readString("Organization Name:");
-        String website = readString("Website:");
-        String department = readString("Department:");
-
-        List<String> phones = readList("Enter phone numbers (comma separated):");
-        List<String> emails = readList("Enter emails (comma separated):");
-
-        try {
-            contactService.createOrganization(name, website, department, phones, emails);
-            System.out.println("SUCCESS: Organization contact created.");
-        } catch (ValidationException e) {
-            System.out.println("ERROR: " + e.getMessage());
-        }
-    }
-
-    public static void listContacts() {
-        List<Contact> contacts = contactService.getAllContacts();
-        System.out.println("\n--- All Contacts ---");
+    private static void viewContactDetails(String decoratorType) {
+        // Accessing the shared service from UC4 where contacts are stored
+        List<Contact> contacts = MyContactsAppMainUC4.contactService.getAllContacts();
         if (contacts.isEmpty()) {
-            System.out.println("No contacts found.");
-        } else {
-            for (Contact c : contacts) {
-                System.out.println(c.getDisplayName() + " [" + c.getClass().getSimpleName() + "]");
-                // Print details if needed logic
+            System.out.println("No contacts to view.");
+            return;
+        }
+
+        MyContactsAppMainUC4.listContacts();
+        int index = readInt("Select contact number to view details:") - 1;
+
+        if (index >= 0 && index < contacts.size()) {
+            Contact contact = contacts.get(index);
+            ContactDisplay display = contact;
+
+            if ("UPPER".equals(decoratorType)) {
+                display = new UpperCaseDecorator(contact);
+            } else if ("MASKED".equals(decoratorType)) {
+                display = new MaskedEmailDecorator(contact);
+            } else if ("COMBINED".equals(decoratorType)) {
+                display = new UpperCaseDecorator(new MaskedEmailDecorator(contact));
             }
+
+            System.out.println("\n--- Contact Details ---");
+            System.out.println(display.getDetails());
+        } else {
+            System.out.println("Invalid selection.");
         }
     }
 
@@ -179,18 +179,5 @@ public class MyContactsAppMainUC4 {
                 System.out.println("Invalid input. Please enter a number.");
             }
         }
-    }
-
-    public static List<String> readList(String prompt) {
-        System.out.println(prompt);
-        String input = scanner.nextLine().trim();
-        List<String> list = new ArrayList<>();
-        if (!input.isEmpty()) {
-            String[] items = input.split(",");
-            for (String item : items) {
-                list.add(item.trim());
-            }
-        }
-        return list;
     }
 }
