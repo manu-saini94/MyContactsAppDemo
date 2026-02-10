@@ -12,8 +12,9 @@ import com.apps.mycontactsapp.util.ValidationUtil;
 /**
  * Abstract base class representing a generic Contact.
  * Uses the Builder Pattern for construction.
+ * Implements ContactDisplay for the Decorator Pattern.
  */
-public abstract class Contact {
+public abstract class Contact implements ContactDisplay {
     private final UUID id;
     private final String name;
     private final LocalDateTime createdAt;
@@ -49,6 +50,31 @@ public abstract class Contact {
     }
 
     public abstract String getDisplayName();
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getDetails() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Name: ").append(getDisplayName()).append("\n");
+        sb.append("Created At: ").append(getCreatedAt()).append("\n");
+
+        if (!phoneNumbers.isEmpty()) {
+            sb.append("Phone Numbers:\n");
+            for (PhoneNumber p : phoneNumbers) {
+                sb.append("  - ").append(p).append("\n");
+            }
+        }
+
+        if (!emailAddresses.isEmpty()) {
+            sb.append("Emails:\n");
+            for (EmailAddress e : emailAddresses) {
+                sb.append("  - ").append(e).append("\n");
+            }
+        }
+        return sb.toString();
+    }
 
     /**
      * Generic Builder for Contact.
