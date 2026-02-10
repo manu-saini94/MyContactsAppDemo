@@ -6,8 +6,8 @@ import com.apps.mycontactsapp.exceptions.ValidationException;
  * Represents a Person contact.
  */
 public class Person extends Contact {
-    private final String firstName;
-    private final String lastName;
+    private String firstName;
+    private String lastName;
 
     private Person(PersonBuilder builder) {
         super(builder);
@@ -15,12 +15,48 @@ public class Person extends Contact {
         this.lastName = builder.lastName;
     }
 
+    // Copy Constructor
+    private Person(Person source) {
+        super(source);
+        this.firstName = source.firstName;
+        this.lastName = source.lastName;
+    }
+
+    @Override
+    public Contact copy() {
+        return new Person(this);
+    }
+
+    @Override
+    protected void updateStateFrom(Contact source) {
+        super.updateStateFrom(source);
+        if (source instanceof Person) {
+            Person p = (Person) source;
+            this.firstName = p.firstName;
+            this.lastName = p.lastName;
+        }
+    }
+
     public String getFirstName() {
         return firstName;
     }
 
+    public void setFirstName(String firstName) throws ValidationException {
+        if (firstName == null || firstName.trim().isEmpty()) {
+            throw new ValidationException("First name cannot be empty.");
+        }
+        this.firstName = firstName;
+    }
+
     public String getLastName() {
         return lastName;
+    }
+
+    public void setLastName(String lastName) throws ValidationException {
+        if (lastName == null || lastName.trim().isEmpty()) {
+            throw new ValidationException("Last name cannot be empty.");
+        }
+        this.lastName = lastName;
     }
 
     @Override

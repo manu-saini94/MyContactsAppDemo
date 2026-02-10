@@ -16,10 +16,10 @@ import com.apps.mycontactsapp.util.ValidationUtil;
  */
 public abstract class Contact implements ContactDisplay {
     private final UUID id;
-    private final String name;
+    private String name;
     private final LocalDateTime createdAt;
-    private final List<PhoneNumber> phoneNumbers;
-    private final List<EmailAddress> emailAddresses;
+    private List<PhoneNumber> phoneNumbers;
+    private List<EmailAddress> emailAddresses;
 
     protected Contact(ContactBuilder<?, ?> builder) {
         this.id = UUID.randomUUID();
@@ -27,6 +27,31 @@ public abstract class Contact implements ContactDisplay {
         this.createdAt = LocalDateTime.now();
         this.phoneNumbers = new ArrayList<>(builder.phoneNumbers);
         this.emailAddresses = new ArrayList<>(builder.emailAddresses);
+    }
+
+    // Copy Constructor
+    protected Contact(Contact source) {
+        this.id = source.id;
+        this.name = source.name;
+        this.createdAt = source.createdAt;
+        this.phoneNumbers = new ArrayList<>(source.phoneNumbers);
+        this.emailAddresses = new ArrayList<>(source.emailAddresses);
+    }
+
+    public abstract Contact copy();
+
+    public ContactMemento createMemento() {
+        return new ContactMemento(this);
+    }
+
+    public void restore(ContactMemento memento) {
+        this.updateStateFrom(memento.getStateSnapshot());
+    }
+
+    protected void updateStateFrom(Contact source) {
+        this.name = source.name;
+        this.phoneNumbers = new ArrayList<>(source.phoneNumbers);
+        this.emailAddresses = new ArrayList<>(source.emailAddresses);
     }
 
     public UUID getId() {
@@ -37,6 +62,13 @@ public abstract class Contact implements ContactDisplay {
         return name;
     }
 
+    public void setName(String name) throws ValidationException {
+        if (name == null || name.trim().isEmpty()) {
+            throw new InvalidContactException("Name cannot be empty.");
+        }
+        this.name = name;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -45,8 +77,30 @@ public abstract class Contact implements ContactDisplay {
         return new ArrayList<>(phoneNumbers);
     }
 
+    public void setPhoneNumbers(List<PhoneNumber> phoneNumbers) throws ValidationException {
+        if (phoneNumbers != null) {
+            for (PhoneNumber p : phoneNumbers) {
+                ValidationUtil.validatePhoneNumber(p.getNumber());
+            }
+            this.phoneNumbers = new ArrayList<>(phoneNumbers);
+        } else {
+            this.phoneNumbers = new ArrayList<>();
+        }
+    }
+
     public List<EmailAddress> getEmailAddresses() {
         return new ArrayList<>(emailAddresses);
+    }
+
+    public void setEmailAddresses(List<EmailAddress> emailAddresses) throws ValidationException {
+        if (emailAddresses != null) {
+            for (EmailAddress e : emailAddresses) {
+                ValidationUtil.validateEmail(e.getEmail());
+            }
+            this.emailAddresses = new ArrayList<>(emailAddresses);
+        } else {
+            this.emailAddresses = new ArrayList<>();
+        }
     }
 
     public abstract String getDisplayName();

@@ -24,6 +24,12 @@ public class MyContactsAppMainUC2 {
 
     private static Scanner scanner = new Scanner(System.in);
 
+    /**
+     * Main entry point for the application.
+     * Initializes dependencies and starts the main menu loop.
+     *
+     * @param args Command line arguments (not used).
+     */
     public static void main(String[] args) {
         // Initialize dependencies
         UserRepository userRepository = new UserRepositoryStub();
@@ -60,6 +66,12 @@ public class MyContactsAppMainUC2 {
         scanner.close();
     }
 
+    /**
+     * UI method to handle user registration.
+     * Prompts for user details and delegates to UserService.
+     *
+     * @param userService The service to use for registration.
+     */
     public static void registerUserUI(UserService userService) {
         System.out.println("\n--- Register User ---");
         String name = readString("Name:");
@@ -75,6 +87,13 @@ public class MyContactsAppMainUC2 {
         }
     }
 
+    /**
+     * UI method to handle user login.
+     * Prompts for credentials, authenticates, and creates a session.
+     *
+     * @param authStrategy   The authentication strategy to use.
+     * @param sessionManager The session manager to create a session.
+     */
     public static void loginUserUI(AuthenticationStrategy authStrategy, SessionManager sessionManager) {
         System.out.println("\n--- Login ---");
         String email = readString("Email:");
@@ -95,11 +114,24 @@ public class MyContactsAppMainUC2 {
 
     // --- Input Helper Methods ---
 
+    /**
+     * Helper method to read a string from the console.
+     *
+     * @param prompt The prompt to display to the user.
+     * @return The trimmed string input by the user.
+     */
     public static String readString(String prompt) {
         System.out.print(prompt + " ");
         return scanner.nextLine().trim();
     }
 
+    /**
+     * Helper method to read an integer from the console.
+     * Loops until a valid integer is entered.
+     *
+     * @param prompt The prompt to display to the user.
+     * @return The integer input by the user.
+     */
     public static int readInt(String prompt) {
         while (true) {
             System.out.print(prompt + " ");

@@ -14,7 +14,6 @@ import com.apps.mycontactsapp.model.ContactDisplay;
 import com.apps.mycontactsapp.model.User;
 import com.apps.mycontactsapp.repository.UserRepository;
 import com.apps.mycontactsapp.repository.stub.UserRepositoryStub;
-import com.apps.mycontactsapp.service.ContactService;
 import com.apps.mycontactsapp.service.UserService;
 import com.apps.mycontactsapp.service.impl.UserServiceImpl;
 
@@ -30,6 +29,12 @@ public class MyContactsAppMainUC5 {
     private static AuthenticationStrategy authStrategy = new BasicAuthenticationStrategy(userRepository);
     private static SessionManager sessionManager = SessionManager.getInstance();
 
+    /**
+     * Main entry point for the application.
+     * Initializes dependencies and starts the main menu loop.
+     *
+     * @param args Command line arguments (not used).
+     */
     public static void main(String[] args) {
         System.out.println("--- UC5: View Contact Details & Decorator Pattern ---");
 
@@ -63,6 +68,13 @@ public class MyContactsAppMainUC5 {
         scanner.close();
     }
 
+    /**
+     * Handles user login flow.
+     * Accessible publicly for reuse in other UCs.
+     *
+     * @return An Optional containing the User if login is successful, or empty
+     *         otherwise.
+     */
     private static Optional<User> loginUser() {
         System.out.println("\n--- Login ---");
         String email = readString("Email:");
@@ -81,6 +93,13 @@ public class MyContactsAppMainUC5 {
         }
     }
 
+    /**
+     * Displays the contact viewing menu.
+     * Allows creating contacts (via UC4) and viewing details with various
+     * decorators.
+     *
+     * @param user The currently logged-in user.
+     */
     private static void contactViewMenu(User user) {
 
         boolean viewing = true;
@@ -132,6 +151,12 @@ public class MyContactsAppMainUC5 {
         }
     }
 
+    /**
+     * Displays details of a specific contact with valid decorators.
+     *
+     * @param decoratorType The type of decorator to apply ("UPPER", "MASKED",
+     *                      "COMBINED", or null).
+     */
     private static void viewContactDetails(String decoratorType) {
         // Accessing the shared service from UC4 where contacts are stored
         List<Contact> contacts = MyContactsAppMainUC4.contactService.getAllContacts();
@@ -164,11 +189,24 @@ public class MyContactsAppMainUC5 {
 
     // --- Helper Methods ---
 
+    /**
+     * Helper method to read a string from the console.
+     *
+     * @param prompt The prompt to display to the user.
+     * @return The trimmed string input by the user.
+     */
     public static String readString(String prompt) {
         System.out.print(prompt + " ");
         return scanner.nextLine().trim();
     }
 
+    /**
+     * Helper method to read an integer from the console.
+     * Loops until a valid integer is entered.
+     *
+     * @param prompt The prompt to display to the user.
+     * @return The integer input by the user.
+     */
     public static int readInt(String prompt) {
         while (true) {
             System.out.print(prompt + " ");
