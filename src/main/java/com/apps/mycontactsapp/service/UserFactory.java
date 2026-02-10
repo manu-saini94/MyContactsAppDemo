@@ -1,6 +1,7 @@
 package com.apps.mycontactsapp.service;
 
 import com.apps.mycontactsapp.exceptions.ValidationException;
+import com.apps.mycontactsapp.model.AdminUser;
 import com.apps.mycontactsapp.model.FreeUser;
 import com.apps.mycontactsapp.model.PremiumUser;
 import com.apps.mycontactsapp.model.User;
@@ -68,8 +69,16 @@ public class UserFactory {
                         .password(hashedPassword)
                         .build();
 
+            case ADMIN:
+                return new AdminUser.Builder()
+                        .id(id)
+                        .name(name)
+                        .email(email)
+                        .password(hashedPassword)
+                        .build();
+
             default:
-                throw new ValidationException("Unsupported user type");
+                throw new ValidationException("Unsupported user type: " + userType);
         }
     }
 }

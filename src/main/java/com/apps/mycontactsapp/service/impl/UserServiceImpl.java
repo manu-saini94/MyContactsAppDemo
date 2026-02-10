@@ -17,6 +17,7 @@ import com.apps.mycontactsapp.service.UserService;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private com.apps.mycontactsapp.service.ContactService contactService;
 
     /**
      * Constructs a new UserServiceImpl with the required repository dependency.
@@ -28,6 +29,10 @@ public class UserServiceImpl implements UserService {
      */
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    public void setContactService(com.apps.mycontactsapp.service.ContactService contactService) {
+        this.contactService = contactService;
     }
 
     /**
@@ -74,5 +79,62 @@ public class UserServiceImpl implements UserService {
 
         // 4. Save User
         userRepository.save(newUser);
+    }
+
+    /**
+     * Retrieves all users.
+     * Enforces Access Control: only ADMIN can execute this.
+     *
+     * @param requester the user requesting the list.
+     * @return list of all users.
+     * @throws ValidationException if requester is not ADMIN.
+     */
+    @Override
+    public java.util.List<User> getAllUsers(User requester) throws ValidationException {
+        if (requester == null || requester.getUserType() != UserType.ADMIN) {
+            throw new ValidationException("Access Denied: Only Admin can view all users.");
+        }
+        return userRepository.findAll();
+    }
+
+    /**
+     * Deletes a user by email (Admin operation).
+     * Enforces Access Control: only ADMIN can execute this.
+     *
+     * @param requester   the user requesting deletion.
+     * @param targetEmail the email of the target user.
+     * @throws ValidationException if requester is not ADMIN or user not found.
+     */
+    @Override
+    public void deleteUser(User requester, String targetEmail) throws ValidationException {
+        if (requester == null || requester.getUserType() != UserType.ADMIN) {
+            throw new ValidationException("Access Denied: Only Admin can delete other users.");
+        }
+
+        java.util.Optional<User> targetUserOpt = userRepository.findByEmail(targetEmail);
+        if (targetUserOpt.isEmpty()) {
+            throw new ValidationException("User not found: " + targetEmail);
+        }
+
+        deleteUser(targetUserOpt.get());
+    }
+
+    /**
+     * Deletes a user and cascades the deletion to their contacts.
+     * - First, deletes all contacts owned by the user.
+     * - Second, deletes the user record itself.
+     *
+     * @param user the user to delete.
+     */
+    @Override
+    public void deleteUser(User user) {
+        if (user != null) {
+            // 1. Cascade Delete Contacts
+            if (contactService != null) {
+                contactService.deleteAllContactsForUser(user.getId());
+            }
+            // 2. Delete User
+            userRepository.delete(user);
+        }
     }
 }

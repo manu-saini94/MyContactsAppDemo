@@ -28,6 +28,70 @@ public class ContactRepositoryStub implements ContactRepository {
 
     @Override
     public List<Contact> findAll() {
-        return new ArrayList<>(contacts.values());
+        return findAll(false);
+    }
+
+    @Override
+    public List<Contact> findAll(boolean includeInactive) {
+        List<Contact> result = new ArrayList<>();
+        for (Contact c : contacts.values()) {
+            if (includeInactive || c.isActive()) {
+                result.add(c);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public List<Contact> findByUserId(Long userId) {
+        return findByUserId(userId, false);
+    }
+
+    @Override
+    public List<Contact> findByUserId(Long userId, boolean includeInactive) {
+        List<Contact> result = new ArrayList<>();
+        for (Contact contact : contacts.values()) {
+            Long contactUserId = contact.getUserId();
+            if (contactUserId != null && contactUserId.equals(userId)) {
+                if (includeInactive || contact.isActive()) {
+                    result.add(contact);
+                }
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public void delete(Contact contact) {
+        if (contact != null) {
+            contact.setActive(false);
+            // In a real DB, we would save the updated state.
+            // Since this is in-memory and 'contact' is a reference to the object in the
+            // map,
+            // setting it to false updates it in the map directly.
+            // But to be safe/consistent with "save", we can put it back.
+            contacts.put(contact.getId(), contact);
+        }
+    }
+
+    @Override
+    public void hardDelete(Contact contact) {
+        if (contact != null) {
+            contacts.remove(contact.getId());
+        }
+    }
+
+    @Override
+    public void deleteByUserId(Long userId) {
+        // Collect IDs to remove to avoid ConcurrentModificationException
+        List<UUID> idsToRemove = new ArrayList<>();
+        for (Contact contact : contacts.values()) {
+            if (userId.equals(contact.getUserId())) {
+                idsToRemove.add(contact.getId());
+            }
+        }
+        for (UUID id : idsToRemove) {
+            contacts.remove(id);
+        }
     }
 }

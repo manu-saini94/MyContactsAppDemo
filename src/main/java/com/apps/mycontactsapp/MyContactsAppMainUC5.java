@@ -118,28 +118,28 @@ public class MyContactsAppMainUC5 {
 
             switch (choice) {
                 case 1:
-                    MyContactsAppMainUC4.createPersonContact();
+                    MyContactsAppMainUC4.createPersonContact(user);
                     break;
                 case 2:
-                    MyContactsAppMainUC4.createOrganizationContact();
+                    MyContactsAppMainUC4.createOrganizationContact(user);
                     break;
                 case 3:
                     // Using local because we want indices for selection elsewhere,
                     // but confusingly 'List All Contacts' could use either.
                     // Let's use UC4's strictly for this option as 'Report'.
-                    MyContactsAppMainUC4.listContacts();
+                    MyContactsAppMainUC4.listContacts(user);
                     break;
                 case 4:
-                    viewContactDetails(null);
+                    viewContactDetails(user, null);
                     break;
                 case 5:
-                    viewContactDetails("UPPER");
+                    viewContactDetails(user, "UPPER");
                     break;
                 case 6:
-                    viewContactDetails("MASKED");
+                    viewContactDetails(user, "MASKED");
                     break;
                 case 7:
-                    viewContactDetails("COMBINED");
+                    viewContactDetails(user, "COMBINED");
                     break;
                 case 8:
                     viewing = false;
@@ -154,18 +154,19 @@ public class MyContactsAppMainUC5 {
     /**
      * Displays details of a specific contact with valid decorators.
      *
+     * @param user          The currently logged-in user.
      * @param decoratorType The type of decorator to apply ("UPPER", "MASKED",
      *                      "COMBINED", or null).
      */
-    private static void viewContactDetails(String decoratorType) {
+    private static void viewContactDetails(User user, String decoratorType) {
         // Accessing the shared service from UC4 where contacts are stored
-        List<Contact> contacts = MyContactsAppMainUC4.contactService.getAllContacts();
+        List<Contact> contacts = MyContactsAppMainUC4.contactService.getContacts(user);
         if (contacts.isEmpty()) {
             System.out.println("No contacts to view.");
             return;
         }
 
-        MyContactsAppMainUC4.listContacts();
+        MyContactsAppMainUC4.listContacts(user);
         int index = readInt("Select contact number to view details:") - 1;
 
         if (index >= 0 && index < contacts.size()) {

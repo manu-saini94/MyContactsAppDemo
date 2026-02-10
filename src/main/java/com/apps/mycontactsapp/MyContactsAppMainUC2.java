@@ -77,7 +77,7 @@ public class MyContactsAppMainUC2 {
         String name = readString("Name:");
         String email = readString("Email:");
         String password = readString("Password:");
-        String userType = readString("User Type (FREE/PREMIUM):");
+        String userType = readString("User Type (FREE/PREMIUM/ADMIN):");
 
         try {
             userService.registerUser(name, email, password, userType);
