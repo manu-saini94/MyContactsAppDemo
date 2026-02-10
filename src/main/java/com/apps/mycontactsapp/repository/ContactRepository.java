@@ -15,4 +15,6 @@ public interface ContactRepository {
     Optional<Contact> findById(UUID id);
 
     List<Contact> findAll();
+
+    List<Contact> findByUserId(Long userId);
 }

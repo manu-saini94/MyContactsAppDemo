@@ -16,6 +16,7 @@ import com.apps.mycontactsapp.util.ValidationUtil;
  */
 public abstract class Contact implements ContactDisplay {
     private final UUID id;
+    private final Long userId; // Owner of the contact
     private String name;
     private final LocalDateTime createdAt;
     private List<PhoneNumber> phoneNumbers;
@@ -23,6 +24,7 @@ public abstract class Contact implements ContactDisplay {
 
     protected Contact(ContactBuilder<?, ?> builder) {
         this.id = UUID.randomUUID();
+        this.userId = builder.userId;
         this.name = builder.name;
         this.createdAt = LocalDateTime.now();
         this.phoneNumbers = new ArrayList<>(builder.phoneNumbers);
@@ -32,6 +34,7 @@ public abstract class Contact implements ContactDisplay {
     // Copy Constructor
     protected Contact(Contact source) {
         this.id = source.id;
+        this.userId = source.userId; // Preserve ownership
         this.name = source.name;
         this.createdAt = source.createdAt;
         this.phoneNumbers = new ArrayList<>(source.phoneNumbers);
@@ -52,10 +55,15 @@ public abstract class Contact implements ContactDisplay {
         this.name = source.name;
         this.phoneNumbers = new ArrayList<>(source.phoneNumbers);
         this.emailAddresses = new ArrayList<>(source.emailAddresses);
+        // userId and id are final and should not change during restore
     }
 
     public UUID getId() {
         return id;
+    }
+
+    public Long getUserId() {
+        return userId;
     }
 
     public String getName() {
@@ -134,9 +142,15 @@ public abstract class Contact implements ContactDisplay {
      * Generic Builder for Contact.
      */
     public static abstract class ContactBuilder<T extends ContactBuilder<T, U>, U extends Contact> {
+        private Long userId;
         private String name;
         private List<PhoneNumber> phoneNumbers = new ArrayList<>();
         private List<EmailAddress> emailAddresses = new ArrayList<>();
+
+        public T userId(Long userId) {
+            this.userId = userId;
+            return self();
+        }
 
         public T name(String name) {
             this.name = name;
@@ -163,6 +177,9 @@ public abstract class Contact implements ContactDisplay {
         }
 
         protected void validate() throws ValidationException {
+            if (userId == null) {
+                throw new InvalidContactException("Contact owner (userId) is required.");
+            }
             if (name == null || name.trim().isEmpty()) {
                 throw new InvalidContactException("Contact name is required.");
             }

@@ -30,4 +30,16 @@ public class ContactRepositoryStub implements ContactRepository {
     public List<Contact> findAll() {
         return new ArrayList<>(contacts.values());
     }
+
+    @Override
+    public List<Contact> findByUserId(Long userId) {
+        List<Contact> userContacts = new ArrayList<>();
+        for (Contact contact : contacts.values()) {
+            Long contactUserId = contact.getUserId();
+            if (contactUserId != null && contactUserId.equals(userId)) {
+                userContacts.add(contact);
+            }
+        }
+        return userContacts;
+    }
 }

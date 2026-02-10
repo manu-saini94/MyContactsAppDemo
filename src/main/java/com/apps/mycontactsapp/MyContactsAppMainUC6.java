@@ -83,16 +83,16 @@ public class MyContactsAppMainUC6 {
             try {
                 switch (choice) {
                     case 1:
-                        MyContactsAppMainUC4.createPersonContact();
+                        MyContactsAppMainUC4.createPersonContact(user);
                         break;
                     case 2:
-                        MyContactsAppMainUC4.createOrganizationContact();
+                        MyContactsAppMainUC4.createOrganizationContact(user);
                         break;
                     case 3:
-                        MyContactsAppMainUC4.listContacts();
+                        MyContactsAppMainUC4.listContacts(user);
                         break;
                     case 4:
-                        editContactLoop();
+                        editContactLoop(user);
                         break;
                     case 5:
                         commandInvoker.undo();
@@ -119,11 +119,12 @@ public class MyContactsAppMainUC6 {
      * Handles the loop for editing a specific contact.
      * Selects a contact and presents edit options based on its type.
      *
+     * @param user The filtered user to edit contacts for.
      * @throws ValidationException If validation fails during edit selection.
      */
-    private static void editContactLoop() throws ValidationException {
-        MyContactsAppMainUC4.listContacts();
-        List<Contact> contacts = MyContactsAppMainUC4.contactService.getAllContacts();
+    private static void editContactLoop(com.apps.mycontactsapp.model.User user) throws ValidationException {
+        MyContactsAppMainUC4.listContacts(user);
+        List<Contact> contacts = MyContactsAppMainUC4.contactService.getContacts(user);
         if (contacts.isEmpty())
             return;
 

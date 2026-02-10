@@ -12,5 +12,10 @@ public enum UserType {
     /**
      * Represents a user with extended privileges.
      */
-    PREMIUM
+    PREMIUM,
+
+    /**
+     * Represents an administrator with full access to all contacts.
+     */
+    ADMIN
 }

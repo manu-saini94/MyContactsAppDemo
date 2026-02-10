@@ -157,6 +157,16 @@ public abstract class User {
             return self();
         }
 
+        public T passwordHash(String passwordHash) {
+            this.passwordHash = passwordHash;
+            return self();
+        }
+
+        public T createdAt(LocalDateTime createdAt) {
+            this.createdAt = createdAt;
+            return self();
+        }
+
         /**
          * Validates that all mandatory fields are set before building the object.
          *

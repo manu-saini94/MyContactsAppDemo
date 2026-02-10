@@ -117,13 +117,13 @@ public class MyContactsAppMainUC4 {
 
             switch (choice) {
                 case 1:
-                    createPersonContact();
+                    createPersonContact(user);
                     break;
                 case 2:
-                    createOrganizationContact();
+                    createOrganizationContact(user);
                     break;
                 case 3:
-                    listContacts();
+                    listContacts(user);
                     break;
                 case 4:
                     loggedIn = false;
@@ -139,7 +139,7 @@ public class MyContactsAppMainUC4 {
      * UI flow for creating a Person contact.
      * Prompts for first name, last name, phones, and emails.
      */
-    public static void createPersonContact() {
+    public static void createPersonContact(User user) {
         System.out.println("\n--- Create Person Contact ---");
         String firstName = readString("First Name:");
         String lastName = readString("Last Name:");
@@ -148,7 +148,7 @@ public class MyContactsAppMainUC4 {
         List<String> emails = readList("Enter emails (comma separated, format Label:Email or just Email):");
 
         try {
-            contactService.createPerson(firstName, lastName, phones, emails);
+            contactService.createPerson(user, firstName, lastName, phones, emails);
             System.out.println("SUCCESS: Person contact created.");
         } catch (ValidationException e) {
             System.out.println("ERROR: " + e.getMessage());
@@ -159,7 +159,7 @@ public class MyContactsAppMainUC4 {
      * UI flow for creating an Organization contact.
      * Prompts for organization name, website, department, phones, and emails.
      */
-    public static void createOrganizationContact() {
+    public static void createOrganizationContact(User user) {
         System.out.println("\n--- Create Organization Contact ---");
         String name = readString("Organization Name:");
         String website = readString("Website:");
@@ -169,7 +169,7 @@ public class MyContactsAppMainUC4 {
         List<String> emails = readList("Enter emails (comma separated):");
 
         try {
-            contactService.createOrganization(name, website, department, phones, emails);
+            contactService.createOrganization(user, name, website, department, phones, emails);
             System.out.println("SUCCESS: Organization contact created.");
         } catch (ValidationException e) {
             System.out.println("ERROR: " + e.getMessage());
@@ -179,8 +179,8 @@ public class MyContactsAppMainUC4 {
     /**
      * Lists all existing contacts to the console.
      */
-    public static void listContacts() {
-        List<Contact> contacts = contactService.getAllContacts();
+    public static void listContacts(User user) {
+        List<Contact> contacts = contactService.getContacts(user);
         System.out.println("\n--- All Contacts ---");
         if (contacts.isEmpty()) {
             System.out.println("No contacts found.");
