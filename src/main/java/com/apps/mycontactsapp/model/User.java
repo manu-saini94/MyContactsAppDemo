@@ -192,6 +192,12 @@ public abstract class User {
             return self();
         }
 
+        /**
+         * Sets the creation timestamp.
+         * 
+         * @param createdAt the creation time.
+         * @return the builder instance.
+         */
         public T createdAt(LocalDateTime createdAt) {
             this.createdAt = createdAt;
             return self();

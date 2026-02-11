@@ -159,6 +159,14 @@ public class ContactGroupServiceImpl implements ContactGroupService {
         return contactGroupRepository.findById(groupId).orElse(null);
     }
 
+    /**
+     * Helper method to retrieve a group and enforce ACL.
+     * 
+     * @param user    the user requesting the group.
+     * @param groupId the ID of the group.
+     * @return the ContactGroup if found and accessible.
+     * @throws ValidationException if group not found or access denied.
+     */
     private ContactGroup getGroupWithAccessCheck(User user, UUID groupId) throws ValidationException {
         ContactGroup group = contactGroupRepository.findById(groupId)
                 .orElseThrow(() -> new ValidationException("Group not found."));

@@ -86,15 +86,30 @@ public class Person extends Contact {
         return (firstName + " " + lastName).trim();
     }
 
+    /**
+     * Builder for Person contact.
+     */
     public static class PersonBuilder extends Contact.ContactBuilder<PersonBuilder, Person> {
         private String firstName;
         private String lastName;
 
+        /**
+         * Sets the first name involved in this builder.
+         * 
+         * @param firstName the first name.
+         * @return the builder instance.
+         */
         public PersonBuilder firstName(String firstName) {
             this.firstName = firstName;
             return this;
         }
 
+        /**
+         * Sets the last name involved in this builder.
+         * 
+         * @param lastName the last name.
+         * @return the builder instance.
+         */
         public PersonBuilder lastName(String lastName) {
             this.lastName = lastName;
             return this;
@@ -105,6 +120,12 @@ public class Person extends Contact {
             return this;
         }
 
+        /**
+         * Builds the Person contact.
+         * 
+         * @return the new Person instance.
+         * @throws ValidationException if validation fails (e.g. no name provided).
+         */
         @Override
         public Person build() throws ValidationException {
             if (firstName == null && lastName == null) {

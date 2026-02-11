@@ -31,6 +31,12 @@ public class UserServiceImpl implements UserService {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Sets the ContactService dependency.
+     * Used for circular dependency resolution (User -> Contact -> User).
+     * 
+     * @param contactService the contact service instance.
+     */
     public void setContactService(com.apps.mycontactsapp.service.ContactService contactService) {
         this.contactService = contactService;
     }

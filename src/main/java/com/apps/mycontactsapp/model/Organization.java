@@ -82,15 +82,30 @@ public class Organization extends Contact {
         return getName() + (department != null ? " (" + department + ")" : "");
     }
 
+    /**
+     * Builder for Organization contact.
+     */
     public static class OrganizationBuilder extends Contact.ContactBuilder<OrganizationBuilder, Organization> {
         private String website;
         private String department;
 
+        /**
+         * Sets the website URL.
+         * 
+         * @param website the website URL.
+         * @return the builder instance.
+         */
         public OrganizationBuilder website(String website) {
             this.website = website;
             return this;
         }
 
+        /**
+         * Sets the department name.
+         * 
+         * @param department the department name.
+         * @return the builder instance.
+         */
         public OrganizationBuilder department(String department) {
             this.department = department;
             return this;
@@ -101,6 +116,12 @@ public class Organization extends Contact {
             return this;
         }
 
+        /**
+         * Builds the Organization contact.
+         * 
+         * @return the new Organization instance.
+         * @throws ValidationException if validation fails.
+         */
         @Override
         public Organization build() throws ValidationException {
             validate(); // Base validation checks 'name'
