@@ -21,9 +21,10 @@ public interface ContactService {
          * @param lastName  the last name of the person.
          * @param phones    list of phone numbers (optional).
          * @param emails    list of email addresses (optional).
+         * @return the created Contact.
          * @throws ValidationException if contact details are invalid.
          */
-        void createPerson(User owner, String firstName, String lastName, List<String> phones, List<String> emails)
+        Contact createPerson(User owner, String firstName, String lastName, List<String> phones, List<String> emails)
                         throws ValidationException;
 
         /**
@@ -35,9 +36,10 @@ public interface ContactService {
          * @param department the department name (optional).
          * @param phones     list of phone numbers (optional).
          * @param emails     list of email addresses (optional).
+         * @return the created Contact.
          * @throws ValidationException if contact details are invalid.
          */
-        void createOrganization(User owner, String name, String website, String department, List<String> phones,
+        Contact createOrganization(User owner, String name, String website, String department, List<String> phones,
                         List<String> emails) throws ValidationException;
 
         /**

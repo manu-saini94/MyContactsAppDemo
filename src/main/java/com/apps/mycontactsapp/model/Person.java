@@ -37,10 +37,21 @@ public class Person extends Contact {
         }
     }
 
+    /**
+     * Gets the first name.
+     * 
+     * @return the first name.
+     */
     public String getFirstName() {
         return firstName;
     }
 
+    /**
+     * Sets the first name.
+     * 
+     * @param firstName the new first name.
+     * @throws ValidationException if the name is null or empty.
+     */
     public void setFirstName(String firstName) throws ValidationException {
         if (firstName == null || firstName.trim().isEmpty()) {
             throw new ValidationException("First name cannot be empty.");
@@ -48,10 +59,21 @@ public class Person extends Contact {
         this.firstName = firstName;
     }
 
+    /**
+     * Gets the last name.
+     * 
+     * @return the last name.
+     */
     public String getLastName() {
         return lastName;
     }
 
+    /**
+     * Sets the last name.
+     * 
+     * @param lastName the new last name.
+     * @throws ValidationException if the name is null or empty.
+     */
     public void setLastName(String lastName) throws ValidationException {
         if (lastName == null || lastName.trim().isEmpty()) {
             throw new ValidationException("Last name cannot be empty.");

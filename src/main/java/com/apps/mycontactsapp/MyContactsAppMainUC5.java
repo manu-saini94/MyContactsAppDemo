@@ -10,7 +10,7 @@ import com.apps.mycontactsapp.auth.SessionManager;
 import com.apps.mycontactsapp.decorator.MaskedEmailDecorator;
 import com.apps.mycontactsapp.decorator.UpperCaseDecorator;
 import com.apps.mycontactsapp.model.Contact;
-import com.apps.mycontactsapp.model.ContactDisplay;
+import com.apps.mycontactsapp.composite.ContactComponent;
 import com.apps.mycontactsapp.model.User;
 import com.apps.mycontactsapp.repository.UserRepository;
 import com.apps.mycontactsapp.repository.stub.UserRepositoryStub;
@@ -171,7 +171,7 @@ public class MyContactsAppMainUC5 {
 
         if (index >= 0 && index < contacts.size()) {
             Contact contact = contacts.get(index);
-            ContactDisplay display = contact;
+            ContactComponent display = contact;
 
             if ("UPPER".equals(decoratorType)) {
                 display = new UpperCaseDecorator(contact);

@@ -4,7 +4,7 @@ import com.apps.mycontactsapp.exceptions.ValidationException;
 import com.apps.mycontactsapp.model.User;
 import com.apps.mycontactsapp.model.UserType;
 import com.apps.mycontactsapp.repository.UserRepository;
-import com.apps.mycontactsapp.service.UserFactory;
+import com.apps.mycontactsapp.factory.UserFactory;
 import com.apps.mycontactsapp.service.UserService;
 
 /**
