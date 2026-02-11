@@ -264,4 +264,23 @@ public class ContactServiceImpl implements ContactService {
             }
         }
     }
+
+    /**
+     * Searches for contacts matching the given specification.
+     * 
+     * @param requester the user requesting the search.
+     * @param spec      the search criteria.
+     * @return a list of matching contacts.
+     */
+    @Override
+    public List<Contact> searchContacts(User requester,
+            com.apps.mycontactsapp.specification.Specification<Contact> spec) {
+        if (spec == null) {
+            return getContacts(requester);
+        }
+        List<Contact> allContacts = getContacts(requester);
+        return allContacts.stream()
+                .filter(spec::isSatisfiedBy)
+                .collect(java.util.stream.Collectors.toList());
+    }
 }
