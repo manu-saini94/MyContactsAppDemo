@@ -95,4 +95,13 @@ public interface ContactService {
          * @param observer the observer to add.
          */
         void addObserver(com.apps.mycontactsapp.observer.ContactObserver observer);
+
+        /**
+         * Searches for contacts matching the given specification.
+         * 
+         * @param requester the user requesting the search.
+         * @param spec      the search criteria.
+         * @return a list of matching contacts.
+         */
+        List<Contact> searchContacts(User requester, com.apps.mycontactsapp.specification.Specification<Contact> spec);
 }
