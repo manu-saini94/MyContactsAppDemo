@@ -76,6 +76,11 @@ public class MyContactsAppMainUC9 {
         }
     }
 
+    /**
+     * Handles user login flow.
+     * 
+     * @return an Optional containing the authenticated User, or empty if failed.
+     */
     private static Optional<User> loginUser() {
         System.out.println("\n--- Login ---");
         String email = readString("Enter Email:");
@@ -94,6 +99,11 @@ public class MyContactsAppMainUC9 {
         }
     }
 
+    /**
+     * Displays the search menu and handles user choices.
+     * 
+     * @param user the logged-in user.
+     */
     private static void searchMenu(User user) {
         boolean inMenu = true;
         while (inMenu) {
@@ -187,6 +197,12 @@ public class MyContactsAppMainUC9 {
         }
     }
 
+    /**
+     * Performs a search using the given specification and displays results.
+     * 
+     * @param user the user performing the search.
+     * @param spec the specification to filter contacts.
+     */
     private static void performSearch(User user, Specification<Contact> spec) {
         System.out.println("Searching...");
         List<Contact> results = contactService.searchContacts(user, spec);
@@ -198,6 +214,11 @@ public class MyContactsAppMainUC9 {
         }
     }
 
+    /**
+     * Lists the given contacts to the console.
+     * 
+     * @param contacts the list of contacts to display.
+     */
     private static void listContacts(List<Contact> contacts) {
         if (contacts.isEmpty()) {
             System.out.println("No contacts to list.");
@@ -222,6 +243,8 @@ public class MyContactsAppMainUC9 {
 
     /**
      * UI flow to create a new Person contact.
+     * 
+     * @param user the user creating the contact.
      */
     private static void createPersonContact(User user) {
         System.out.println("\n--- Create Person Contact ---");
@@ -258,6 +281,8 @@ public class MyContactsAppMainUC9 {
 
     /**
      * UI flow to create a new Organization contact.
+     * 
+     * @param user the user creating the contact.
      */
     private static void createOrganizationContact(User user) {
         System.out.println("\n--- Create Organization Contact ---");
@@ -282,11 +307,23 @@ public class MyContactsAppMainUC9 {
         }
     }
 
+    /**
+     * Helper method to read a string from input.
+     * 
+     * @param prompt the prompt to display.
+     * @return the trimmed input string.
+     */
     private static String readString(String prompt) {
         System.out.print(prompt + " ");
         return scanner.nextLine().trim();
     }
 
+    /**
+     * Helper method to read an integer from input.
+     * 
+     * @param prompt the prompt to display.
+     * @return the parsed integer.
+     */
     private static int readInt(String prompt) {
         while (true) {
             System.out.print(prompt + " ");
@@ -299,6 +336,12 @@ public class MyContactsAppMainUC9 {
         }
     }
 
+    /**
+     * Helper method to read a comma-separated list of strings from input.
+     * 
+     * @param prompt the prompt to display.
+     * @return a List of strings.
+     */
     private static List<String> readList(String prompt) {
         System.out.println(prompt);
         String input = scanner.nextLine().trim();
