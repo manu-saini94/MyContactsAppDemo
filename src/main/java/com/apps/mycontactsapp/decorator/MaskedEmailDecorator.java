@@ -1,6 +1,6 @@
 package com.apps.mycontactsapp.decorator;
 
-import com.apps.mycontactsapp.model.ContactDisplay;
+import com.apps.mycontactsapp.composite.ContactComponent;
 
 /**
  * Decorator that masks email addresses in the contact details.
@@ -11,9 +11,9 @@ public class MaskedEmailDecorator extends BaseContactDecorator {
     /**
      * Constructor.
      *
-     * @param wrappedContact the ContactDisplay instance to decorate.
+     * @param wrappedContact the ContactComponent instance to decorate.
      */
-    public MaskedEmailDecorator(ContactDisplay wrappedContact) {
+    public MaskedEmailDecorator(ContactComponent wrappedContact) {
         super(wrappedContact);
     }
 

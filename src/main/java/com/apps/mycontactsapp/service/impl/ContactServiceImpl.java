@@ -31,10 +31,11 @@ public class ContactServiceImpl implements ContactService {
      * @param lastName  the last name.
      * @param phones    list of phone numbers.
      * @param emails    list of email addresses.
+     * @return the created Contact.
      * @throws ValidationException if the owner is null or inputs are invalid.
      */
     @Override
-    public void createPerson(User owner, String firstName, String lastName, List<String> phones, List<String> emails)
+    public Contact createPerson(User owner, String firstName, String lastName, List<String> phones, List<String> emails)
             throws ValidationException {
         // Validate owner
         if (owner == null) {
@@ -50,6 +51,7 @@ public class ContactServiceImpl implements ContactService {
 
         Person person = builder.build();
         contactRepository.save(person);
+        return person;
     }
 
     /**
@@ -62,10 +64,11 @@ public class ContactServiceImpl implements ContactService {
      * @param department the department.
      * @param phones     list of phone numbers.
      * @param emails     list of email addresses.
+     * @return the created Contact.
      * @throws ValidationException if the owner is null or inputs are invalid.
      */
     @Override
-    public void createOrganization(User owner, String name, String website, String department, List<String> phones,
+    public Contact createOrganization(User owner, String name, String website, String department, List<String> phones,
             List<String> emails) throws ValidationException {
         // Validate owner
         if (owner == null) {
@@ -85,6 +88,7 @@ public class ContactServiceImpl implements ContactService {
 
         Organization organization = builder.build();
         contactRepository.save(organization);
+        return organization;
     }
 
     /**

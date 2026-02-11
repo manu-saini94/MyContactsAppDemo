@@ -45,6 +45,11 @@ public abstract class User {
         return id;
     }
 
+    /**
+     * Gets the user's name.
+     *
+     * @return the name.
+     */
     public String getName() {
         return name;
     }
@@ -53,10 +58,20 @@ public abstract class User {
         this.name = name;
     }
 
+    /**
+     * Gets the user's email address.
+     *
+     * @return the email.
+     */
     public String getEmail() {
         return email;
     }
 
+    /**
+     * Gets the hashed password of the user.
+     *
+     * @return the password hash.
+     */
     public String getPasswordHash() {
         return passwordHash;
     }
@@ -65,14 +80,29 @@ public abstract class User {
         this.passwordHash = passwordHash;
     }
 
+    /**
+     * Gets the creation timestamp of the user profile.
+     *
+     * @return the LocalDateTime of creation.
+     */
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
+    /**
+     * Gets the type of the user (e.g., FREE, PREMIUM, ADMIN).
+     *
+     * @return the UserType.
+     */
     public UserType getUserType() {
         return userType;
     }
 
+    /**
+     * Gets the user's preferences.
+     *
+     * @return the ProfilePreferences.
+     */
     public ProfilePreferences getPreferences() {
         return preferences;
     }

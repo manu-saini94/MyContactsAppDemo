@@ -1,6 +1,6 @@
 package com.apps.mycontactsapp.decorator;
 
-import com.apps.mycontactsapp.model.ContactDisplay;
+import com.apps.mycontactsapp.composite.ContactComponent;
 
 /**
  * Decorator that converts contact details to uppercase.
@@ -10,9 +10,9 @@ public class UpperCaseDecorator extends BaseContactDecorator {
     /**
      * Constructor.
      *
-     * @param wrappedContact the ContactDisplay instance to decorate.
+     * @param wrappedContact the ContactComponent instance to decorate.
      */
-    public UpperCaseDecorator(ContactDisplay wrappedContact) {
+    public UpperCaseDecorator(ContactComponent wrappedContact) {
         super(wrappedContact);
     }
 

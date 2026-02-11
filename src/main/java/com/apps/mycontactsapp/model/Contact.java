@@ -2,9 +2,12 @@ package com.apps.mycontactsapp.model;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
+import com.apps.mycontactsapp.composite.ContactComponent;
 import com.apps.mycontactsapp.exceptions.InvalidContactException;
 import com.apps.mycontactsapp.exceptions.ValidationException;
 import com.apps.mycontactsapp.util.ValidationUtil;
@@ -12,14 +15,15 @@ import com.apps.mycontactsapp.util.ValidationUtil;
 /**
  * Abstract base class representing a generic Contact.
  * Uses the Builder Pattern for construction.
- * Implements ContactDisplay for the Decorator Pattern.
+ * Implements ContactComponent for the Composite and Decorator Patterns.
  */
-public abstract class Contact implements ContactDisplay {
+public abstract class Contact implements ContactComponent {
     private final UUID id;
     private final Long userId; // Owner of the contact
     private String name;
     private final LocalDateTime createdAt;
     private boolean active = true; // Soft delete flag
+    private Set<String> tags = new HashSet<>();
     private List<PhoneNumber> phoneNumbers;
     private List<EmailAddress> emailAddresses;
 
@@ -29,51 +33,99 @@ public abstract class Contact implements ContactDisplay {
         this.name = builder.name;
         this.createdAt = LocalDateTime.now();
         this.active = true;
+        this.tags = new HashSet<>();
         this.phoneNumbers = new ArrayList<>(builder.phoneNumbers);
         this.emailAddresses = new ArrayList<>(builder.emailAddresses);
     }
 
-    // Copy Constructor
+    /**
+     * Copy Constructor.
+     * 
+     * @param source the contact to copy from.
+     */
     protected Contact(Contact source) {
         this.id = source.id;
         this.userId = source.userId; // Preserve ownership
         this.name = source.name;
         this.createdAt = source.createdAt;
         this.active = source.active; // Preserve active state
+        this.tags = new HashSet<>(source.tags);
         this.phoneNumbers = new ArrayList<>(source.phoneNumbers);
         this.emailAddresses = new ArrayList<>(source.emailAddresses);
     }
 
+    /**
+     * Creates a deep copy of the contact.
+     * 
+     * @return a new Contact instance with the same state.
+     */
     public abstract Contact copy();
 
+    /**
+     * Creates a memento of the current state.
+     * 
+     * @return a ContactMemento containing the current state.
+     */
     public ContactMemento createMemento() {
         return new ContactMemento(this);
     }
 
+    /**
+     * Restores the state from a memento.
+     * 
+     * @param memento the memento to restore from.
+     */
     public void restore(ContactMemento memento) {
         this.updateStateFrom(memento.getStateSnapshot());
     }
 
+    /**
+     * Updates the state from another contact object.
+     * 
+     * @param source the contact to copy state from.
+     */
     protected void updateStateFrom(Contact source) {
         this.name = source.name;
         this.active = source.active;
+        this.tags = new HashSet<>(source.tags);
         this.phoneNumbers = new ArrayList<>(source.phoneNumbers);
         this.emailAddresses = new ArrayList<>(source.emailAddresses);
         // userId and id are final and should not change during restore
     }
 
+    /**
+     * Gets the unique identifier of the contact.
+     * 
+     * @return the UUID of the contact.
+     */
     public UUID getId() {
         return id;
     }
 
+    /**
+     * Gets the user ID of the contact owner.
+     * 
+     * @return the owner's user ID.
+     */
     public Long getUserId() {
         return userId;
     }
 
+    /**
+     * Gets the name of the contact.
+     * 
+     * @return the name.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Sets the name of the contact.
+     * 
+     * @param name the new name.
+     * @throws ValidationException if the name is null or empty.
+     */
     public void setName(String name) throws ValidationException {
         if (name == null || name.trim().isEmpty()) {
             throw new InvalidContactException("Name cannot be empty.");
@@ -81,22 +133,49 @@ public abstract class Contact implements ContactDisplay {
         this.name = name;
     }
 
+    /**
+     * Gets the creation timestamp.
+     * 
+     * @return the LocalDateTime when the contact was created.
+     */
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
+    /**
+     * Checks if the contact is active (not soft-deleted).
+     * 
+     * @return true if active, false otherwise.
+     */
     public boolean isActive() {
         return active;
     }
 
+    /**
+     * Sets the active status of the contact.
+     * 
+     * @param active true to activate, false to soft-delete.
+     */
     public void setActive(boolean active) {
         this.active = active;
     }
 
+    /**
+     * Gets the list of phone numbers.
+     * 
+     * @return a list of PhoneNumber objects.
+     */
     public List<PhoneNumber> getPhoneNumbers() {
         return new ArrayList<>(phoneNumbers);
     }
 
+    /**
+     * Sets the list of phone numbers.
+     * Validates each phone number.
+     * 
+     * @param phoneNumbers the new list of phone numbers.
+     * @throws ValidationException if any phone number is invalid.
+     */
     public void setPhoneNumbers(List<PhoneNumber> phoneNumbers) throws ValidationException {
         if (phoneNumbers != null) {
             for (PhoneNumber p : phoneNumbers) {
@@ -108,10 +187,22 @@ public abstract class Contact implements ContactDisplay {
         }
     }
 
+    /**
+     * Gets the list of email addresses.
+     * 
+     * @return a list of EmailAddress objects.
+     */
     public List<EmailAddress> getEmailAddresses() {
         return new ArrayList<>(emailAddresses);
     }
 
+    /**
+     * Sets the list of email addresses.
+     * Validates each email address.
+     * 
+     * @param emailAddresses the new list of email addresses.
+     * @throws ValidationException if any email address is invalid.
+     */
     public void setEmailAddresses(List<EmailAddress> emailAddresses) throws ValidationException {
         if (emailAddresses != null) {
             for (EmailAddress e : emailAddresses) {
@@ -123,10 +214,19 @@ public abstract class Contact implements ContactDisplay {
         }
     }
 
+    /**
+     * Gets the display name of the contact.
+     * Subclasses must implement this to provide specific display logic.
+     * 
+     * @return the display name.
+     */
     public abstract String getDisplayName();
 
     /**
      * {@inheritDoc}
+     * Gets the formatted details of the contact.
+     * 
+     * @return the contact details string.
      */
     @Override
     public String getDetails() {
@@ -147,7 +247,54 @@ public abstract class Contact implements ContactDisplay {
                 sb.append("  - ").append(e).append("\n");
             }
         }
+        if (!tags.isEmpty()) {
+            sb.append("Tags: ").append(String.join(", ", tags)).append("\n");
+        }
         return sb.toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     * Adds a tag to the contact.
+     * 
+     * @param tag the tag to add.
+     */
+    @Override
+    public void addTag(String tag) {
+        if (tag != null && !tag.trim().isEmpty()) {
+            this.tags.add(tag);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     * Removes a tag from the contact.
+     * 
+     * @param tag the tag to remove.
+     */
+    @Override
+    public void removeTag(String tag) {
+        this.tags.remove(tag);
+    }
+
+    /**
+     * {@inheritDoc}
+     * Soft deletes the contact.
+     */
+    @Override
+    public void delete() {
+        this.active = false;
+    }
+
+    /**
+     * {@inheritDoc}
+     * Gets the set of tags.
+     * 
+     * @return a Set of tags.
+     */
+    @Override
+    public Set<String> getTags() {
+        return new HashSet<>(tags);
     }
 
     /**

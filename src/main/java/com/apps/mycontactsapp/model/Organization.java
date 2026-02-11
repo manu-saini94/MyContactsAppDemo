@@ -37,19 +37,41 @@ public class Organization extends Contact {
         }
     }
 
+    /**
+     * Gets the organization's website.
+     * 
+     * @return the website URL.
+     */
     public String getWebsite() {
         return website;
     }
 
+    /**
+     * Sets the organization's website.
+     * 
+     * @param website the new website URL.
+     * @throws ValidationException if validation fails.
+     */
     public void setWebsite(String website) throws ValidationException {
         // Optional validation logic here
         this.website = website;
     }
 
+    /**
+     * Gets the department name.
+     * 
+     * @return the department name.
+     */
     public String getDepartment() {
         return department;
     }
 
+    /**
+     * Sets the department name.
+     * 
+     * @param department the new department name.
+     * @throws ValidationException if validation fails.
+     */
     public void setDepartment(String department) throws ValidationException {
         // Optional validation logic here
         this.department = department;
