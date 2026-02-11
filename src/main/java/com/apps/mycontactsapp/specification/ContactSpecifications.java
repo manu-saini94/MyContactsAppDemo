@@ -16,6 +16,9 @@ public class ContactSpecifications {
     /**
      * Specification to check if contact name contains the given string
      * (case-insensitive).
+     * 
+     * @param namePart the substring to search for in the name.
+     * @return a Specification for filtering by name.
      */
     public static Specification<Contact> nameContains(String namePart) {
         return contact -> {
@@ -31,6 +34,9 @@ public class ContactSpecifications {
     /**
      * Specification to check if contact has a phone number containing the given
      * string.
+     * 
+     * @param phonePart the substring to search for in phone numbers.
+     * @return a Specification for filtering by phone number.
      */
     public static Specification<Contact> phoneContains(String phonePart) {
         return contact -> {
@@ -45,6 +51,9 @@ public class ContactSpecifications {
 
     /**
      * Specification to check if contact has an email containing the given string.
+     * 
+     * @param emailPart the substring to search for in email addresses.
+     * @return a Specification for filtering by email.
      */
     public static Specification<Contact> emailContains(String emailPart) {
         return contact -> {

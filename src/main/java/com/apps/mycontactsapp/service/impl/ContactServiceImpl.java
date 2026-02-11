@@ -135,6 +135,48 @@ public class ContactServiceImpl implements ContactService {
         }
     }
 
+    /**
+     * Retrieves a specific contact by ID and increments its access count.
+     * 
+     * @param requester the user requesting the contact.
+     * @param contactId the UUID of the contact.
+     * @return the contact found.
+     * @throws ValidationException if contact not found or access denied.
+     */
+    @Override
+    public Contact getContact(User requester, java.util.UUID contactId) throws ValidationException {
+        if (requester == null || contactId == null) {
+            throw new ValidationException("Invalid request.");
+        }
+
+        java.util.Optional<Contact> contactOpt = contactRepository.findById(contactId);
+        if (contactOpt.isEmpty()) {
+            throw new ValidationException("Contact not found.");
+        }
+
+        Contact contact = contactOpt.get();
+        // ACL Check
+        boolean isAdmin = requester.getUserType() == UserType.ADMIN;
+        boolean isOwner = contact.getUserId() != null && contact.getUserId().equals(requester.getId());
+
+        if (!isAdmin && !isOwner) {
+            throw new ValidationException("Access Denied.");
+        }
+
+        // Use default inactive behavior matching getContacts logic?
+        // Usually retrieving specific by ID allows seeing details even if inactive
+        // (e.g. before restore)
+        // unless specific rule. For now, allow it if ACL passes.
+
+        // Increment access count
+        contact.incrementAccessCount();
+        contactRepository.save(contact); // Persist change (important for real DB, helpful for stub consistency)
+
+        return contact;
+    }
+
+    // Duplicate removed
+
     private final java.util.List<com.apps.mycontactsapp.observer.ContactObserver> observers = new java.util.ArrayList<>();
 
     /**

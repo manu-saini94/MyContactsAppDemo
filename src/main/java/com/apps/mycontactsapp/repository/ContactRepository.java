@@ -26,10 +26,9 @@ public interface ContactRepository {
     Optional<Contact> findById(UUID id);
 
     /**
-     * Retrieves all contacts, including inactive ones?
-     * Implementation dependent, usually filtered by active.
+     * Retrieves all contacts.
      * 
-     * @return a list of all contacts.
+     * @return a list of all contacts in the repository.
      */
     List<Contact> findAll();
 
@@ -54,7 +53,7 @@ public interface ContactRepository {
      * 
      * @param userId          the ID of the owner.
      * @param includeInactive whether to include soft-deleted contacts.
-     * @return a list of contacts.
+     * @return a list of contacts owned by the user.
      */
     List<Contact> findByUserId(Long userId, boolean includeInactive);
 

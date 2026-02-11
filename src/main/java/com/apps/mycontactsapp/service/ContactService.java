@@ -64,6 +64,16 @@ public interface ContactService {
         List<Contact> getContacts(User requester, boolean includeInactive);
 
         /**
+         * Retrieves a specific contact by ID and increments its access count.
+         * 
+         * @param requester the user requesting the contact.
+         * @param contactId the UUID of the contact.
+         * @return the contact found.
+         * @throws ValidationException if contact not found or access denied.
+         */
+        Contact getContact(User requester, UUID contactId) throws ValidationException;
+
+        /**
          * Deletes a contact (soft delete).
          *
          * @param requester the user requesting the deletion.

@@ -42,7 +42,17 @@ public interface UserRepository {
      */
     boolean existsByEmail(String email);
 
+    /**
+     * Retrieves all users in the system.
+     * 
+     * @return a list of all users.
+     */
     java.util.List<User> findAll();
 
+    /**
+     * Deletes a user.
+     * 
+     * @param user the user to delete.
+     */
     void delete(User user);
 }

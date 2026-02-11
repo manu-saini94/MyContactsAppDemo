@@ -23,6 +23,7 @@ public abstract class Contact implements ContactComponent {
     private String name;
     private final LocalDateTime createdAt;
     private boolean active = true; // Soft delete flag
+    private int accessCount = 0; // Frequently contacted counter
     private Set<String> tags = new HashSet<>();
     private List<PhoneNumber> phoneNumbers;
     private List<EmailAddress> emailAddresses;
@@ -161,6 +162,22 @@ public abstract class Contact implements ContactComponent {
     }
 
     /**
+     * Gets the number of times this contact has been accessed/viewed.
+     * 
+     * @return the access count.
+     */
+    public int getAccessCount() {
+        return accessCount;
+    }
+
+    /**
+     * Increments the access count by one.
+     */
+    public void incrementAccessCount() {
+        this.accessCount++;
+    }
+
+    /**
      * Gets the list of phone numbers.
      * 
      * @return a list of PhoneNumber objects.
@@ -233,6 +250,7 @@ public abstract class Contact implements ContactComponent {
         StringBuilder sb = new StringBuilder();
         sb.append("Name: ").append(getDisplayName()).append("\n");
         sb.append("Created At: ").append(getCreatedAt()).append("\n");
+        sb.append("Access Count: ").append(getAccessCount()).append("\n");
 
         if (!phoneNumbers.isEmpty()) {
             sb.append("Phone Numbers:\n");
