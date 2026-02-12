@@ -49,6 +49,12 @@ public class MyContactsAppMainUC10 {
         }
     }
 
+    /**
+     * Main entry point for the application.
+     * Initializes dependencies and starts the main menu loop.
+     * 
+     * @param args Command line arguments (not used).
+     */
     public static void main(String[] args) {
         System.out.println("--- UC10: Advanced Filtering & Sorting ---");
 
@@ -77,6 +83,11 @@ public class MyContactsAppMainUC10 {
         }
     }
 
+    /**
+     * Handles user login flow.
+     * 
+     * @return an Optional containing the authenticated User, or empty if failed.
+     */
     private static Optional<User> loginUser() {
         System.out.println("\n--- Login ---");
         String email = readString("Enter Email:");
@@ -88,6 +99,11 @@ public class MyContactsAppMainUC10 {
         });
     }
 
+    /**
+     * Displays the Advanced Filter Menu.
+     * 
+     * @param user the logged-in user.
+     */
     private static void filterMenu(User user) {
         boolean inMenu = true;
         while (inMenu) {
@@ -127,6 +143,11 @@ public class MyContactsAppMainUC10 {
 
     // Dummy contacts method removed.
 
+    /**
+     * Views a contact's details and increments its access count.
+     * 
+     * @param user the logged-in user.
+     */
     private static void viewContactAndIncrement(User user) {
         List<Contact> contacts = contactService.getContacts(user);
         if (contacts.isEmpty()) {
@@ -150,6 +171,11 @@ public class MyContactsAppMainUC10 {
         }
     }
 
+    /**
+     * Applies selected filters and sorting to the contact list.
+     * 
+     * @param user the logged-in user.
+     */
     private static void applyFiltersAndSort(User user) {
         List<Contact> allContacts = contactService.getContacts(user);
 
@@ -201,6 +227,11 @@ public class MyContactsAppMainUC10 {
         listContacts(results);
     }
 
+    /**
+     * Prompts the user to select a filter interactively.
+     * 
+     * @return the selected ContactFilter, or null if choice was 'No Filter'.
+     */
     private static ContactFilter selectFilter() {
         System.out.println("1. Tag Filter");
         System.out.println("2. Frequently Contacted (Count >= X)");
@@ -222,6 +253,11 @@ public class MyContactsAppMainUC10 {
         }
     }
 
+    /**
+     * Lists the given contacts to the console.
+     * 
+     * @param contacts the list of contacts to display.
+     */
     private static void listContacts(List<Contact> contacts) {
         if (contacts.isEmpty()) {
             System.out.println("No matching contacts.");
@@ -234,11 +270,23 @@ public class MyContactsAppMainUC10 {
         }
     }
 
+    /**
+     * Helper to read a string from input.
+     * 
+     * @param prompt the prompt to display.
+     * @return the trimmed input string.
+     */
     private static String readString(String prompt) {
         System.out.print(prompt + " ");
         return scanner.nextLine().trim();
     }
 
+    /**
+     * Helper to read an integer from input.
+     * 
+     * @param prompt the prompt to display.
+     * @return the integer value.
+     */
     private static int readInt(String prompt) {
         while (true) {
             System.out.print(prompt + " ");
@@ -251,6 +299,12 @@ public class MyContactsAppMainUC10 {
         }
     }
 
+    /**
+     * Helper to read a comma-separated list from input.
+     * 
+     * @param prompt the prompt to display.
+     * @return a List of strings.
+     */
     private static List<String> readList(String prompt) {
         System.out.println(prompt);
         String input = scanner.nextLine().trim();
@@ -264,6 +318,11 @@ public class MyContactsAppMainUC10 {
         return list;
     }
 
+    /**
+     * UI flow to create a new Person contact.
+     * 
+     * @param user the user creating the contact.
+     */
     private static void createPersonContact(User user) {
         System.out.println("\n--- Create Person Contact ---");
         String firstName = readString("First Name:");
@@ -286,6 +345,11 @@ public class MyContactsAppMainUC10 {
         }
     }
 
+    /**
+     * UI flow to create a new Organization contact.
+     * 
+     * @param user the user creating the contact.
+     */
     private static void createOrganizationContact(User user) {
         System.out.println("\n--- Create Organization Contact ---");
         String name = readString("Organization Name:");
