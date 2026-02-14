@@ -22,6 +22,11 @@ public class Person extends Contact {
         this.lastName = source.lastName;
     }
 
+    /**
+     * Starts a deep copy of the Person.
+     * 
+     * @return a new Person instance.
+     */
     @Override
     public Contact copy() {
         return new Person(this);
@@ -81,6 +86,12 @@ public class Person extends Contact {
         this.lastName = lastName;
     }
 
+    /**
+     * Gets the display name of the person.
+     * Combines first and last name.
+     * 
+     * @return the full name.
+     */
     @Override
     public String getDisplayName() {
         return (firstName + " " + lastName).trim();

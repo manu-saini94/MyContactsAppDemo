@@ -37,6 +37,11 @@ public class EmailAddress {
         return email;
     }
 
+    /**
+     * Returns a string representation of the EmailAddress.
+     * 
+     * @return the string representation (label: email).
+     */
     @Override
     public String toString() {
         return label + ": " + email;

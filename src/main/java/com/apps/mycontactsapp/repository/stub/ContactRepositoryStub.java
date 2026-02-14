@@ -16,21 +16,43 @@ import com.apps.mycontactsapp.repository.ContactRepository;
 public class ContactRepositoryStub implements ContactRepository {
     private final Map<UUID, Contact> contacts = new HashMap<>();
 
+    /**
+     * Saves or updates a contact.
+     * 
+     * @param contact the contact to save.
+     */
     @Override
     public void save(Contact contact) {
         contacts.put(contact.getId(), contact);
     }
 
+    /**
+     * Finds a contact by its ID.
+     * 
+     * @param id the UUID of the contact.
+     * @return an Optional containing the contact if found.
+     */
     @Override
     public Optional<Contact> findById(UUID id) {
         return Optional.ofNullable(contacts.get(id));
     }
 
+    /**
+     * Finds all contacts.
+     * 
+     * @return a list of all contacts.
+     */
     @Override
     public List<Contact> findAll() {
         return findAll(false);
     }
 
+    /**
+     * Finds all contacts, optionally including inactive ones.
+     * 
+     * @param includeInactive true to include inactive contacts.
+     * @return a list of contacts.
+     */
     @Override
     public List<Contact> findAll(boolean includeInactive) {
         List<Contact> result = new ArrayList<>();
@@ -42,11 +64,24 @@ public class ContactRepositoryStub implements ContactRepository {
         return result;
     }
 
+    /**
+     * Finds all contacts for a specific user.
+     * 
+     * @param userId the user ID.
+     * @return a list of contacts.
+     */
     @Override
     public List<Contact> findByUserId(Long userId) {
         return findByUserId(userId, false);
     }
 
+    /**
+     * Finds all contacts for a specific user, optionally including inactive ones.
+     * 
+     * @param userId          the user ID.
+     * @param includeInactive true to include inactive contacts.
+     * @return a list of contacts.
+     */
     @Override
     public List<Contact> findByUserId(Long userId, boolean includeInactive) {
         List<Contact> result = new ArrayList<>();
@@ -61,6 +96,11 @@ public class ContactRepositoryStub implements ContactRepository {
         return result;
     }
 
+    /**
+     * Soft deletes a contact.
+     * 
+     * @param contact the contact to delete.
+     */
     @Override
     public void delete(Contact contact) {
         if (contact != null) {
@@ -74,6 +114,11 @@ public class ContactRepositoryStub implements ContactRepository {
         }
     }
 
+    /**
+     * Hard deletes a contact (permanent removal).
+     * 
+     * @param contact the contact to hard delete.
+     */
     @Override
     public void hardDelete(Contact contact) {
         if (contact != null) {
@@ -81,6 +126,11 @@ public class ContactRepositoryStub implements ContactRepository {
         }
     }
 
+    /**
+     * Deletes all contacts belonging to a specific user.
+     * 
+     * @param userId the user ID.
+     */
     @Override
     public void deleteByUserId(Long userId) {
         // Collect IDs to remove to avoid ConcurrentModificationException

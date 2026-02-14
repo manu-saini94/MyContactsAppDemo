@@ -16,6 +16,9 @@ public class UpdatePreferencesCommand implements ProfileCommand {
         this.newPreferences = newPreferences;
     }
 
+    /**
+     * Executes the update preferences command.
+     */
     @Override
     public void execute() {
         if (newPreferences != null) {

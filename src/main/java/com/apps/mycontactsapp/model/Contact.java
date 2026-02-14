@@ -341,23 +341,41 @@ public abstract class Contact implements ContactComponent {
         private List<PhoneNumber> phoneNumbers = new ArrayList<>();
         private List<EmailAddress> emailAddresses = new ArrayList<>();
 
+        /**
+         * Sets the user ID for the contact owner.
+         * 
+         * @param userId the owner's user ID.
+         * @return the builder instance.
+         */
         public T userId(Long userId) {
             this.userId = userId;
             return self();
         }
 
+        /**
+         * Sets the contact's name.
+         * 
+         * @param name the name of the contact.
+         * @return the builder instance.
+         */
         public T name(String name) {
             this.name = name;
             return self();
         }
 
+        /**
+         * Adds a phone number to the contact.
+         * 
+         * @param label  the label for the phone number (e.g., "Mobile", "Work").
+         * @param number the phone number string.
+         * @return the builder instance.
+         */
         public T addPhoneNumber(String label, String number) {
             try {
                 // Ideally propagate exception, but for Builder pattern often we validate at
                 // build()
                 // or validate immediately. Let's validate immediately regarding format.
                 // However, the user input might be raw. Integrating strict validation:
-                // ValidationUtil.validatePhoneNumber(number); // Uncomment for strict
             } catch (Exception e) {
                 // Log or handle
             }
@@ -365,6 +383,13 @@ public abstract class Contact implements ContactComponent {
             return self();
         }
 
+        /**
+         * Adds an email address to the contact.
+         * 
+         * @param label the label for the email address (e.g., "Personal", "Work").
+         * @param email the email address string.
+         * @return the builder instance.
+         */
         public T addEmailAddress(String label, String email) {
             this.emailAddresses.add(new EmailAddress(label, email));
             return self();

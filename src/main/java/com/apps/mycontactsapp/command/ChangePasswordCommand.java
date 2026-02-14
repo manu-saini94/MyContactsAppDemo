@@ -19,6 +19,9 @@ public class ChangePasswordCommand implements ProfileCommand {
         this.newPassword = newPassword;
     }
 
+    /**
+     * Executes the password change command.
+     */
     @Override
     public void execute() {
         try {

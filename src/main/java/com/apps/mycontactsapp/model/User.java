@@ -62,6 +62,11 @@ public abstract class User {
     }
 
     // Getters
+    /**
+     * Gets the unique identifier of the user.
+     * 
+     * @return the user ID.
+     */
     public Long getId() {
         return id;
     }
@@ -75,6 +80,11 @@ public abstract class User {
         return name;
     }
 
+    /**
+     * Sets the user's name.
+     * 
+     * @param name the new name.
+     */
     public void setName(String name) {
         this.name = name;
     }
@@ -97,6 +107,11 @@ public abstract class User {
         return passwordHash;
     }
 
+    /**
+     * Sets the hashed password.
+     * 
+     * @param passwordHash the new password hash.
+     */
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
     }
@@ -128,6 +143,11 @@ public abstract class User {
         return preferences;
     }
 
+    /**
+     * Sets the user's preferences.
+     * 
+     * @param preferences the new preferences.
+     */
     public void setPreferences(ProfilePreferences preferences) {
         this.preferences = preferences;
     }
@@ -208,6 +228,12 @@ public abstract class User {
             return self();
         }
 
+        /**
+         * Sets the password hash directly.
+         * 
+         * @param passwordHash the password hash.
+         * @return the builder instance.
+         */
         public T passwordHash(String passwordHash) {
             this.passwordHash = passwordHash;
             return self();

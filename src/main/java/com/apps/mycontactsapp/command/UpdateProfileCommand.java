@@ -15,6 +15,9 @@ public class UpdateProfileCommand implements ProfileCommand {
         this.newName = newName;
     }
 
+    /**
+     * Executes the update profile command.
+     */
     @Override
     public void execute() {
         if (newName != null && !newName.trim().isEmpty()) {

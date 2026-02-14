@@ -325,4 +325,52 @@ public class ContactServiceImpl implements ContactService {
                 .filter(spec::isSatisfiedBy)
                 .collect(java.util.stream.Collectors.toList());
     }
+<<<<<<< Updated upstream
+=======
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param requester the user performing the tagging.
+     * @param contactId the ID of the contact to tag.
+     * @param tagName   the name of the tag to add.
+     * @throws ValidationException if access denied.
+     */
+    @Override
+    public void tagContact(User requester, java.util.UUID contactId, String tagName) throws ValidationException {
+        Contact contact = getContact(requester, contactId); // Validates access
+
+        com.apps.mycontactsapp.model.Tag tag = com.apps.mycontactsapp.factory.TagFactory.getTag(tagName);
+        contact.addTag(tag);
+
+        // Sync with user's global tags
+        requester.addUserTag(tag);
+
+        // Notify Observers
+        for (com.apps.mycontactsapp.observer.ContactObserver observer : observers) {
+            observer.onContactTagged(contact, tag);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param requester the user performing the untagging.
+     * @param contactId the ID of the contact to untag.
+     * @param tagName   the name of the tag to remove.
+     * @throws ValidationException if access denied.
+     */
+    @Override
+    public void untagContact(User requester, java.util.UUID contactId, String tagName) throws ValidationException {
+        Contact contact = getContact(requester, contactId);
+
+        com.apps.mycontactsapp.model.Tag tag = com.apps.mycontactsapp.factory.TagFactory.getTag(tagName);
+        contact.removeTag(tagName);
+
+        // Notify Observers
+        for (com.apps.mycontactsapp.observer.ContactObserver observer : observers) {
+            observer.onContactUntagged(contact, tag);
+        }
+    }
+>>>>>>> Stashed changes
 }

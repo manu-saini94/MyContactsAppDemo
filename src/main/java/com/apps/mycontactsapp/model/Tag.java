@@ -20,10 +20,21 @@ public class Tag {
         this.name = name;
     }
 
+    /**
+     * Gets the tag name.
+     * 
+     * @return the name.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Checks equality based on tag name.
+     * 
+     * @param o the object to compare.
+     * @return true if equal, false otherwise.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -34,11 +45,21 @@ public class Tag {
         return Objects.equals(name, tag.name);
     }
 
+    /**
+     * Generates a hash code based on tag name.
+     * 
+     * @return the hash code.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(name);
     }
 
+    /**
+     * Returns the string representation (the tag name).
+     * 
+     * @return the tag name.
+     */
     @Override
     public String toString() {
         return name;
