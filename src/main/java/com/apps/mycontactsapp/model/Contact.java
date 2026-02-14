@@ -27,8 +27,8 @@ public abstract class Contact implements ContactComponent {
     private boolean active = true; // Soft delete flag
     private int accessCount = 0; // Frequently contacted counter
 
-    // UC-11: Use Set<Tag> instead of Set<String>
-    private Set<Tag> tags = new HashSet<>();
+    // UC-11 & UC-12: Tags managed via Association Class
+    protected java.util.Set<ContactTag> contactTags = new java.util.HashSet<>();
 
     private List<PhoneNumber> phoneNumbers;
     private List<EmailAddress> emailAddresses;
@@ -39,7 +39,7 @@ public abstract class Contact implements ContactComponent {
         this.name = builder.name;
         this.createdAt = LocalDateTime.now();
         this.active = true;
-        this.tags = new HashSet<>();
+        this.contactTags = new HashSet<>();
         this.phoneNumbers = new ArrayList<>(builder.phoneNumbers);
         this.emailAddresses = new ArrayList<>(builder.emailAddresses);
     }
@@ -55,7 +55,8 @@ public abstract class Contact implements ContactComponent {
         this.name = source.name;
         this.createdAt = source.createdAt;
         this.active = source.active; // Preserve active state
-        this.tags = new HashSet<>(source.tags); // Shallow copy of Tag references (Flyweights are immutable)
+        // Shallow copy of ContactTag associations (Tag is immutable)
+        this.contactTags = new HashSet<>(source.contactTags);
         this.phoneNumbers = new ArrayList<>(source.phoneNumbers);
         this.emailAddresses = new ArrayList<>(source.emailAddresses);
     }
@@ -93,7 +94,7 @@ public abstract class Contact implements ContactComponent {
     protected void updateStateFrom(Contact source) {
         this.name = source.name;
         this.active = source.active;
-        this.tags = new HashSet<>(source.tags);
+        this.contactTags = new HashSet<>(source.contactTags);
         this.phoneNumbers = new ArrayList<>(source.phoneNumbers);
         this.emailAddresses = new ArrayList<>(source.emailAddresses);
         // userId and id are final and should not change during restore
@@ -250,6 +251,12 @@ public abstract class Contact implements ContactComponent {
      * 
      * @return the contact details string.
      */
+    /**
+     * {@inheritDoc}
+     * Gets the formatted details of the contact.
+     * 
+     * @return the contact details string.
+     */
     @Override
     public String getDetails() {
         StringBuilder sb = new StringBuilder();
@@ -270,8 +277,10 @@ public abstract class Contact implements ContactComponent {
                 sb.append("  - ").append(e).append("\n");
             }
         }
-        if (!tags.isEmpty()) {
-            sb.append("Tags: ").append(tags.stream().map(Tag::getName).collect(Collectors.joining(", "))).append("\n");
+        if (!contactTags.isEmpty()) {
+            sb.append("Tags: ").append(contactTags.stream()
+                    .map(ContactTag::toString)
+                    .collect(Collectors.joining(", "))).append("\n");
         }
         return sb.toString();
     }
@@ -286,7 +295,19 @@ public abstract class Contact implements ContactComponent {
     @Override
     public void addTag(String tag) {
         if (tag != null && !tag.trim().isEmpty()) {
-            this.tags.add(TagFactory.getTag(tag));
+            Tag t = TagFactory.getTag(tag);
+            this.contactTags.add(new ContactTag(this, t));
+        }
+    }
+
+    /**
+     * Adds a Tag object to the contact (Helper).
+     * 
+     * @param tag the Tag object.
+     */
+    public void addTag(Tag tag) {
+        if (tag != null) {
+            this.contactTags.add(new ContactTag(this, tag));
         }
     }
 
@@ -299,7 +320,8 @@ public abstract class Contact implements ContactComponent {
     @Override
     public void removeTag(String tag) {
         if (tag != null) {
-            this.tags.remove(TagFactory.getTag(tag));
+            Tag t = TagFactory.getTag(tag);
+            this.contactTags.remove(new ContactTag(this, t));
         }
     }
 
@@ -320,7 +342,7 @@ public abstract class Contact implements ContactComponent {
      */
     @Override
     public Set<String> getTags() {
-        return tags.stream().map(Tag::getName).collect(Collectors.toSet());
+        return contactTags.stream().map(ct -> ct.getTag().getName()).collect(Collectors.toSet());
     }
 
     /**
@@ -329,7 +351,16 @@ public abstract class Contact implements ContactComponent {
      * @return a Set of Tag objects.
      */
     public Set<Tag> getTagObjects() {
-        return new HashSet<>(tags);
+        return contactTags.stream().map(ContactTag::getTag).collect(Collectors.toSet());
+    }
+
+    /**
+     * Gets the ContactTag associations.
+     * 
+     * @return a Set of ContactTag objects.
+     */
+    public Set<ContactTag> getContactTags() {
+        return new HashSet<>(contactTags);
     }
 
     /**
