@@ -27,6 +27,6 @@ public class MaskedEmailDecorator extends BaseContactDecorator {
         // Regex to find emails and mask them.
         // Simplified masking logic for demonstration within the string block.
         // A robust solution might match the email pattern and replace.
-        return details.replaceAll("([a-zA-Z0-9])[^@]+@([a-zA-Z0-9.-]+)", "$1***@$2");
+        return details.replaceAll("([a-zA-Z0-9])[^@\\s]*@([a-zA-Z0-9.-]+)", "$1***@$2");
     }
 }
