@@ -325,4 +325,33 @@ public class ContactServiceImpl implements ContactService {
                 .filter(spec::isSatisfiedBy)
                 .collect(java.util.stream.Collectors.toList());
     }
+
+    @Override
+    public void tagContact(User requester, java.util.UUID contactId, String tagName) throws ValidationException {
+        Contact contact = getContact(requester, contactId); // Validates access
+
+        com.apps.mycontactsapp.model.Tag tag = com.apps.mycontactsapp.factory.TagFactory.getTag(tagName);
+        contact.addTag(tag);
+
+        // Sync with user's global tags
+        requester.addUserTag(tag);
+
+        // Notify Observers
+        for (com.apps.mycontactsapp.observer.ContactObserver observer : observers) {
+            observer.onContactTagged(contact, tag);
+        }
+    }
+
+    @Override
+    public void untagContact(User requester, java.util.UUID contactId, String tagName) throws ValidationException {
+        Contact contact = getContact(requester, contactId);
+
+        com.apps.mycontactsapp.model.Tag tag = com.apps.mycontactsapp.factory.TagFactory.getTag(tagName);
+        contact.removeTag(tagName);
+
+        // Notify Observers
+        for (com.apps.mycontactsapp.observer.ContactObserver observer : observers) {
+            observer.onContactUntagged(contact, tag);
+        }
+    }
 }
