@@ -114,4 +114,24 @@ public interface ContactService {
          * @return a list of matching contacts.
          */
         List<Contact> searchContacts(User requester, com.apps.mycontactsapp.specification.Specification<Contact> spec);
+
+        /**
+         * Adds a tag to a contact and notifies observers.
+         * 
+         * @param requester the user.
+         * @param contactId the contact ID.
+         * @param tagName   the tag name.
+         * @throws ValidationException if contact not found.
+         */
+        void tagContact(User requester, UUID contactId, String tagName) throws ValidationException;
+
+        /**
+         * Removes a tag from a contact and notifies observers.
+         * 
+         * @param requester the user.
+         * @param contactId the contact ID.
+         * @param tagName   the tag name.
+         * @throws ValidationException if contact not found.
+         */
+        void untagContact(User requester, UUID contactId, String tagName) throws ValidationException;
 }

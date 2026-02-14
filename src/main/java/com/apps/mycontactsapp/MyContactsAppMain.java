@@ -396,9 +396,7 @@ public class MyContactsAppMain {
         try {
             Contact contact = contactService.createPerson(user, firstName, lastName, phones, emails);
             for (String tag : tags) {
-                contact.addTag(tag);
-                // Sync tag to user's global list
-                user.addUserTag(com.apps.mycontactsapp.factory.TagFactory.getTag(tag));
+                contactService.tagContact(user, contact.getId(), tag);
             }
             System.out.println("SUCCESS: Person contact created.");
         } catch (ValidationException e) {
@@ -424,9 +422,7 @@ public class MyContactsAppMain {
         try {
             Contact contact = contactService.createOrganization(user, name, website, dept, phones, emails);
             for (String tag : tags) {
-                contact.addTag(tag);
-                // Sync tag to user's global list
-                user.addUserTag(com.apps.mycontactsapp.factory.TagFactory.getTag(tag));
+                contactService.tagContact(user, contact.getId(), tag);
             }
             System.out.println("SUCCESS: Organization contact created.");
         } catch (ValidationException e) {
@@ -645,15 +641,24 @@ public class MyContactsAppMain {
             String tag = readString("Tag to add:");
             if (!tag.isEmpty()) {
                 executeSafeCommand(new UpdateContactCommand(contact, () -> {
-                    contact.addTag(tag);
-                    user.addUserTag(com.apps.mycontactsapp.factory.TagFactory.getTag(tag));
+                    try {
+                        contactService.tagContact(user, contact.getId(), tag);
+                    } catch (ValidationException e) {
+                        System.err.println("Error adding tag: " + e.getMessage());
+                    }
                 }));
                 System.out.println("Tag added.");
             }
         } else if (tagChoice == 2) {
             String tag = readString("Tag to remove:");
             if (!tag.isEmpty()) {
-                executeSafeCommand(new UpdateContactCommand(contact, () -> contact.removeTag(tag)));
+                executeSafeCommand(new UpdateContactCommand(contact, () -> {
+                    try {
+                        contactService.untagContact(user, contact.getId(), tag);
+                    } catch (ValidationException e) {
+                        System.err.println("Error removing tag: " + e.getMessage());
+                    }
+                }));
                 System.out.println("Tag removed from contact (remains in global list).");
             }
         }

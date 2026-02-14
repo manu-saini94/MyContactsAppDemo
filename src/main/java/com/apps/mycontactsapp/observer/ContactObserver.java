@@ -14,4 +14,22 @@ public interface ContactObserver {
      * @param contact the contact that was deleted.
      */
     void onContactDeleted(Contact contact);
+
+    /**
+     * Called when a tag is added to a contact.
+     * 
+     * @param contact the contact.
+     * @param tag     the tag added.
+     */
+    default void onContactTagged(Contact contact, com.apps.mycontactsapp.model.Tag tag) {
+    }
+
+    /**
+     * Called when a tag is removed from a contact.
+     * 
+     * @param contact the contact.
+     * @param tag     the tag removed.
+     */
+    default void onContactUntagged(Contact contact, com.apps.mycontactsapp.model.Tag tag) {
+    }
 }
