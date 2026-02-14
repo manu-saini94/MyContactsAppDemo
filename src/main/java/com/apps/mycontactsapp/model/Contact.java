@@ -6,10 +6,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import com.apps.mycontactsapp.composite.ContactComponent;
 import com.apps.mycontactsapp.exceptions.InvalidContactException;
 import com.apps.mycontactsapp.exceptions.ValidationException;
+import com.apps.mycontactsapp.factory.TagFactory;
 import com.apps.mycontactsapp.util.ValidationUtil;
 
 /**
@@ -24,7 +26,10 @@ public abstract class Contact implements ContactComponent {
     private final LocalDateTime createdAt;
     private boolean active = true; // Soft delete flag
     private int accessCount = 0; // Frequently contacted counter
-    private Set<String> tags = new HashSet<>();
+
+    // UC-11 & UC-12: Tags managed via Association Class
+    protected java.util.Set<ContactTag> contactTags = new java.util.HashSet<>();
+
     private List<PhoneNumber> phoneNumbers;
     private List<EmailAddress> emailAddresses;
 
@@ -34,7 +39,7 @@ public abstract class Contact implements ContactComponent {
         this.name = builder.name;
         this.createdAt = LocalDateTime.now();
         this.active = true;
-        this.tags = new HashSet<>();
+        this.contactTags = new HashSet<>();
         this.phoneNumbers = new ArrayList<>(builder.phoneNumbers);
         this.emailAddresses = new ArrayList<>(builder.emailAddresses);
     }
@@ -50,7 +55,8 @@ public abstract class Contact implements ContactComponent {
         this.name = source.name;
         this.createdAt = source.createdAt;
         this.active = source.active; // Preserve active state
-        this.tags = new HashSet<>(source.tags);
+        // Shallow copy of ContactTag associations (Tag is immutable)
+        this.contactTags = new HashSet<>(source.contactTags);
         this.phoneNumbers = new ArrayList<>(source.phoneNumbers);
         this.emailAddresses = new ArrayList<>(source.emailAddresses);
     }
@@ -88,7 +94,7 @@ public abstract class Contact implements ContactComponent {
     protected void updateStateFrom(Contact source) {
         this.name = source.name;
         this.active = source.active;
-        this.tags = new HashSet<>(source.tags);
+        this.contactTags = new HashSet<>(source.contactTags);
         this.phoneNumbers = new ArrayList<>(source.phoneNumbers);
         this.emailAddresses = new ArrayList<>(source.emailAddresses);
         // userId and id are final and should not change during restore
@@ -245,6 +251,12 @@ public abstract class Contact implements ContactComponent {
      * 
      * @return the contact details string.
      */
+    /**
+     * {@inheritDoc}
+     * Gets the formatted details of the contact.
+     * 
+     * @return the contact details string.
+     */
     @Override
     public String getDetails() {
         StringBuilder sb = new StringBuilder();
@@ -265,8 +277,10 @@ public abstract class Contact implements ContactComponent {
                 sb.append("  - ").append(e).append("\n");
             }
         }
-        if (!tags.isEmpty()) {
-            sb.append("Tags: ").append(String.join(", ", tags)).append("\n");
+        if (!contactTags.isEmpty()) {
+            sb.append("Tags: ").append(contactTags.stream()
+                    .map(ContactTag::toString)
+                    .collect(Collectors.joining(", "))).append("\n");
         }
         return sb.toString();
     }
@@ -274,13 +288,26 @@ public abstract class Contact implements ContactComponent {
     /**
      * {@inheritDoc}
      * Adds a tag to the contact.
+     * Uses TagFactory to obtain Flyweight Tag instance.
      * 
-     * @param tag the tag to add.
+     * @param tag the tag name to add.
      */
     @Override
     public void addTag(String tag) {
         if (tag != null && !tag.trim().isEmpty()) {
-            this.tags.add(tag);
+            Tag t = TagFactory.getTag(tag);
+            this.contactTags.add(new ContactTag(this, t));
+        }
+    }
+
+    /**
+     * Adds a Tag object to the contact (Helper).
+     * 
+     * @param tag the Tag object.
+     */
+    public void addTag(Tag tag) {
+        if (tag != null) {
+            this.contactTags.add(new ContactTag(this, tag));
         }
     }
 
@@ -288,11 +315,14 @@ public abstract class Contact implements ContactComponent {
      * {@inheritDoc}
      * Removes a tag from the contact.
      * 
-     * @param tag the tag to remove.
+     * @param tag the tag name to remove.
      */
     @Override
     public void removeTag(String tag) {
-        this.tags.remove(tag);
+        if (tag != null) {
+            Tag t = TagFactory.getTag(tag);
+            this.contactTags.remove(new ContactTag(this, t));
+        }
     }
 
     /**
@@ -306,13 +336,31 @@ public abstract class Contact implements ContactComponent {
 
     /**
      * {@inheritDoc}
-     * Gets the set of tags.
+     * Gets the set of tags as Strings for compatibility.
      * 
-     * @return a Set of tags.
+     * @return a Set of tag names.
      */
     @Override
     public Set<String> getTags() {
-        return new HashSet<>(tags);
+        return contactTags.stream().map(ct -> ct.getTag().getName()).collect(Collectors.toSet());
+    }
+
+    /**
+     * Gets the set of Tag objects (Flyweights).
+     * 
+     * @return a Set of Tag objects.
+     */
+    public Set<Tag> getTagObjects() {
+        return contactTags.stream().map(ContactTag::getTag).collect(Collectors.toSet());
+    }
+
+    /**
+     * Gets the ContactTag associations.
+     * 
+     * @return a Set of ContactTag objects.
+     */
+    public Set<ContactTag> getContactTags() {
+        return new HashSet<>(contactTags);
     }
 
     /**
