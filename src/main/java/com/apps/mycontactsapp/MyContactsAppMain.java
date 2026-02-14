@@ -195,10 +195,12 @@ public class MyContactsAppMain {
             System.out.println("2. Contacts Management");
             System.out.println("3. Groups Management");
 
-            int maxOption = 3;
+            System.out.println("4. Global Tag Management"); // Added per request
+            int maxOption = 4;
+
             if (UserType.ADMIN.equals(user.getUserType())) {
-                System.out.println("4. Admin Operations");
-                maxOption = 4;
+                System.out.println("5. Admin Operations");
+                maxOption = 5;
             }
             System.out.println("0. Logout");
 
@@ -216,7 +218,14 @@ public class MyContactsAppMain {
                     groupsMenu(user);
                     break;
                 case 4:
-                    adminMenu(user);
+                    manageTagsUI(user);
+                    break;
+                case 5:
+                    if (UserType.ADMIN.equals(user.getUserType())) {
+                        adminMenu(user);
+                    } else {
+                        System.out.println("Invalid option.");
+                    }
                     break;
                 case 0:
                     loggedIn = false;
@@ -386,8 +395,11 @@ public class MyContactsAppMain {
 
         try {
             Contact contact = contactService.createPerson(user, firstName, lastName, phones, emails);
-            for (String tag : tags)
+            for (String tag : tags) {
                 contact.addTag(tag);
+                // Sync tag to user's global list
+                user.addUserTag(com.apps.mycontactsapp.factory.TagFactory.getTag(tag));
+            }
             System.out.println("SUCCESS: Person contact created.");
         } catch (ValidationException e) {
             System.out.println("ERROR: " + e.getMessage());
@@ -411,8 +423,11 @@ public class MyContactsAppMain {
 
         try {
             Contact contact = contactService.createOrganization(user, name, website, dept, phones, emails);
-            for (String tag : tags)
+            for (String tag : tags) {
                 contact.addTag(tag);
+                // Sync tag to user's global list
+                user.addUserTag(com.apps.mycontactsapp.factory.TagFactory.getTag(tag));
+            }
             System.out.println("SUCCESS: Organization contact created.");
         } catch (ValidationException e) {
             System.out.println("ERROR: " + e.getMessage());
@@ -556,7 +571,11 @@ public class MyContactsAppMain {
         if (d == 4)
             display = new UpperCaseDecorator(new MaskedEmailDecorator(display));
 
-        System.out.println("\n--- Contact Details ---");
+        System.out.println("\n--- Contact Details (Complete View) ---");
+        // Ensure we explicitly show ID and Type which might not be in getDetails() by
+        // default depending on implementation
+        System.out.println("ID: " + contact.getId());
+        System.out.println("Type: " + contact.getClass().getSimpleName());
         System.out.println(display.getDetails());
     }
 
@@ -615,6 +634,27 @@ public class MyContactsAppMain {
                         throw new RuntimeException(e);
                     }
                 }));
+            }
+        }
+
+        System.out.println("1. Add Tag");
+        System.out.println("2. Remove Tag");
+        System.out.println("3. Finish Editing");
+        int tagChoice = readInt("Tag Action (3 to skip):", 1, 3);
+        if (tagChoice == 1) {
+            String tag = readString("Tag to add:");
+            if (!tag.isEmpty()) {
+                executeSafeCommand(new UpdateContactCommand(contact, () -> {
+                    contact.addTag(tag);
+                    user.addUserTag(com.apps.mycontactsapp.factory.TagFactory.getTag(tag));
+                }));
+                System.out.println("Tag added.");
+            }
+        } else if (tagChoice == 2) {
+            String tag = readString("Tag to remove:");
+            if (!tag.isEmpty()) {
+                executeSafeCommand(new UpdateContactCommand(contact, () -> contact.removeTag(tag)));
+                System.out.println("Tag removed from contact (remains in global list).");
             }
         }
     }
@@ -768,6 +808,49 @@ public class MyContactsAppMain {
     // Admin Operations
     // =========================================================================
 
+    // =========================================================================
+    // Tag Management (Global)
+    // =========================================================================
+
+    /**
+     * UI menu for global tag management.
+     * Allows the user to view their own tags and create new ones.
+     * 
+     * @param user the logged-in user.
+     */
+    private static void manageTagsUI(User user) {
+        boolean inMenu = true;
+        while (inMenu) {
+            System.out.println("\n--- Global Tag Management ---");
+            System.out.println("1. List All Global Tags");
+            System.out.println("2. Create New Tag");
+            System.out.println("3. Back");
+
+            int choice = readInt("Choice:", 1, 3);
+
+            switch (choice) {
+                case 1:
+                    java.util.Set<com.apps.mycontactsapp.model.Tag> tags = user.getUserTags();
+                    if (tags.isEmpty()) {
+                        System.out.println("No global tags found for you.");
+                    } else {
+                        System.out.println("Your Global Tags (" + tags.size() + "):");
+                        tags.forEach(t -> System.out.println("- " + t.getName()));
+                    }
+                    break;
+                case 2:
+                    String name = readString("Enter new tag name:");
+                    com.apps.mycontactsapp.model.Tag newTag = com.apps.mycontactsapp.factory.TagFactory.getTag(name);
+                    user.addUserTag(newTag);
+                    System.out.println("Tag '" + name + "' added to your global list.");
+                    break;
+                case 3:
+                    inMenu = false;
+                    break;
+            }
+        }
+    }
+
     /**
      * UI menu for admin operations.
      * 
@@ -780,9 +863,10 @@ public class MyContactsAppMain {
             System.out.println("1. List All Users");
             System.out.println("2. Global Contact Search");
             System.out.println("3. Delete User");
-            System.out.println("4. Back");
+            System.out.println("4. View System Stats (Flyweight Tags)"); // Added for UC-11
+            System.out.println("5. Back");
 
-            int choice = readInt("Choice:", 1, 4);
+            int choice = readInt("Choice:", 1, 5);
             switch (choice) {
                 case 1:
                     try {
@@ -810,6 +894,11 @@ public class MyContactsAppMain {
                     }
                     break;
                 case 4:
+                    // UC-11: Flyweight Pattern Verification
+                    System.out.println("Total Flyweight Tags in Memory: "
+                            + com.apps.mycontactsapp.factory.TagFactory.getPoolSize());
+                    break;
+                case 5:
                     inMenu = false;
                     break;
             }

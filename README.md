@@ -16,6 +16,10 @@ This application consolidates multiple use cases (UC1 to UC10) into a single, co
 5.  **Search**: Advanced search using Specification Pattern (Name, Phone, Email, Tag, etc.) (UC9).
 6.  **Filter & Sort**: Advanced filtering and sorting options (Strategy Pattern) (UC10).
 7.  **Admin Features**: User oversight and global search capabilities.
+8.  **Tag Management**: Create and manage global tags efficiently using the **Flyweight Pattern** (UC11).
+    -   Global Tag Management menu for users.
+    -   User-scoped tag visibility.
+    -   Memory optimization for repeated tags.
 
 ## Getting Started
 
@@ -53,4 +57,4 @@ The project follows a modular structure:
 -   **Model**: Domain entities (User, Contact, etc.).
 -   **Service**: Business logic and operations.
 -   **Repository**: Data abstraction layer.
--   **Patterns Used**: Singleton, Factory, Builder, Strategy, Observer, Decorator, Command, Composite, Specification.
+-   **Patterns Used**: Singleton, Factory, Builder, Strategy, Observer, Decorator, Command, Composite, Specification, Flyweight.

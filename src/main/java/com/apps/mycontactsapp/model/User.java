@@ -25,6 +25,9 @@ public abstract class User {
     private final UserType userType;
     private ProfilePreferences preferences;
 
+    // UC-11: Scoped tags for the user
+    private java.util.Set<Tag> userTags = new java.util.HashSet<>();
+
     /**
      * Protected constructor to be called by the Builder.
      *
@@ -38,6 +41,24 @@ public abstract class User {
         this.createdAt = builder.createdAt;
         this.userType = builder.userType;
         this.preferences = new ProfilePreferences(); // Initialize with defaults
+    }
+
+    /**
+     * Gets the set of tags managed by this user.
+     * 
+     * @return a Set of Tag objects.
+     */
+    public java.util.Set<Tag> getUserTags() {
+        return userTags;
+    }
+
+    /**
+     * Adds a tag to the user's managed list.
+     * 
+     * @param tag the tag to add.
+     */
+    public void addUserTag(Tag tag) {
+        this.userTags.add(tag);
     }
 
     // Getters
