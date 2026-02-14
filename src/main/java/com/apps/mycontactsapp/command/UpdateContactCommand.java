@@ -20,6 +20,13 @@ public class UpdateContactCommand implements Command {
         this.updateAction = updateAction;
     }
 
+    /**
+     * Executes the update command.
+     * If executed for the first time, performs the update and saves the new state.
+     * If re-executed (Redo), restores the new state.
+     * 
+     * @throws ValidationException if validation fails.
+     */
     @Override
     public void execute() throws ValidationException {
         if (newState == null) {
@@ -33,6 +40,9 @@ public class UpdateContactCommand implements Command {
         }
     }
 
+    /**
+     * Undoes the update, restoring the old state.
+     */
     @Override
     public void undo() {
         contact.restore(oldState);

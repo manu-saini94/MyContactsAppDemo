@@ -2,6 +2,10 @@ package com.apps.mycontactsapp.command;
 
 import com.apps.mycontactsapp.exceptions.ValidationException;
 
+/**
+ * Interface for all commands in the application.
+ * Supports the Command Pattern.
+ */
 public interface Command {
     /**
      * Executes the command logic.

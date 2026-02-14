@@ -22,6 +22,11 @@ public class Organization extends Contact {
         this.department = source.department;
     }
 
+    /**
+     * Starts a deep copy of the Organization.
+     * 
+     * @return a new Organization instance.
+     */
     @Override
     public Contact copy() {
         return new Organization(this);
@@ -77,6 +82,12 @@ public class Organization extends Contact {
         this.department = department;
     }
 
+    /**
+     * Gets the display name of the organization.
+     * Includes department if available.
+     * 
+     * @return the display name.
+     */
     @Override
     public String getDisplayName() {
         return getName() + (department != null ? " (" + department + ")" : "");

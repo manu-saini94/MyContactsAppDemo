@@ -326,6 +326,16 @@ public class ContactServiceImpl implements ContactService {
                 .collect(java.util.stream.Collectors.toList());
     }
 
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param requester the user performing the tagging.
+     * @param contactId the ID of the contact to tag.
+     * @param tagName   the name of the tag to add.
+     * @throws ValidationException if access denied.
+     */
+
     @Override
     public void tagContact(User requester, java.util.UUID contactId, String tagName) throws ValidationException {
         Contact contact = getContact(requester, contactId); // Validates access
@@ -342,6 +352,14 @@ public class ContactServiceImpl implements ContactService {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param requester the user performing the untagging.
+     * @param contactId the ID of the contact to untag.
+     * @param tagName   the name of the tag to remove.
+     * @throws ValidationException if access denied.
+     */
     @Override
     public void untagContact(User requester, java.util.UUID contactId, String tagName) throws ValidationException {
         Contact contact = getContact(requester, contactId);
@@ -354,4 +372,5 @@ public class ContactServiceImpl implements ContactService {
             observer.onContactUntagged(contact, tag);
         }
     }
+
 }

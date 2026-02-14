@@ -37,6 +37,11 @@ public class PhoneNumber {
         return number;
     }
 
+    /**
+     * Returns a string representation of the PhoneNumber.
+     * 
+     * @return the string representation (label: number).
+     */
     @Override
     public String toString() {
         return label + ": " + number;

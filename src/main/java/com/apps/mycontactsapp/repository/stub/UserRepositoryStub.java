@@ -6,10 +6,19 @@ import java.util.Map;
 import com.apps.mycontactsapp.model.User;
 import com.apps.mycontactsapp.repository.UserRepository;
 
+/**
+ * In-memory implementation of UserRepository (Stub).
+ */
 public class UserRepositoryStub implements UserRepository {
     private final Map<String, User> users = new HashMap<>();
     private long idCounter = 1;
 
+    /**
+     * Saves or updates a user.
+     * 
+     * @param user the user to save.
+     * @return the saved user.
+     */
     @Override
     public User save(User user) {
         if (user.getId() != null) {
@@ -60,21 +69,43 @@ public class UserRepositoryStub implements UserRepository {
         return newUser;
     }
 
+    /**
+     * Finds a user by email.
+     * 
+     * @param email the email address.
+     * @return an Optional containing the user if found.
+     */
     @Override
     public java.util.Optional<User> findByEmail(String email) {
         return java.util.Optional.ofNullable(users.get(email));
     }
 
+    /**
+     * Checks if a user exists by email.
+     * 
+     * @param email the email address.
+     * @return true if exists, false otherwise.
+     */
     @Override
     public boolean existsByEmail(String email) {
         return users.containsKey(email);
     }
 
+    /**
+     * Finds all users.
+     * 
+     * @return a list of all users.
+     */
     @Override
     public java.util.List<User> findAll() {
         return new java.util.ArrayList<>(users.values());
     }
 
+    /**
+     * Deletes a user.
+     * 
+     * @param user the user to delete.
+     */
     @Override
     public void delete(User user) {
         if (user != null) {

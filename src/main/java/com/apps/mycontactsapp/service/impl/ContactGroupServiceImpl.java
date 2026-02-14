@@ -11,6 +11,9 @@ import com.apps.mycontactsapp.model.UserType;
 import com.apps.mycontactsapp.repository.ContactGroupRepository;
 import com.apps.mycontactsapp.service.ContactGroupService;
 
+/**
+ * Implementation of ContactGroupService.
+ */
 public class ContactGroupServiceImpl implements ContactGroupService {
 
     private final ContactGroupRepository contactGroupRepository;

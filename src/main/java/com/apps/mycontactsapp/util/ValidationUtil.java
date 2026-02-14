@@ -53,6 +53,12 @@ public class ValidationUtil {
         }
     }
 
+    /**
+     * Validates that a phone number is a 10-digit number.
+     * 
+     * @param phoneNumber the phone number string.
+     * @throws ValidationException if the format is invalid.
+     */
     public static void validatePhoneNumber(String phoneNumber) throws ValidationException {
         if (phoneNumber == null || !phoneNumber.matches("\\d{10}")) {
             throw new ValidationException("Invalid phone number format. Must be 10 digits.");
@@ -60,6 +66,12 @@ public class ValidationUtil {
     }
 
     // Reuse existing validateEmail but with specific context if needed
+    /**
+     * Validates a contact email address.
+     * 
+     * @param email the email address.
+     * @throws ValidationException if the email is invalid.
+     */
     public static void validateContactEmail(String email) throws ValidationException {
         validateEmail(email);
     }
